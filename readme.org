@@ -1,0 +1,48 @@
+#+TITLE: rigole's emacs config
+#+AUTHOR: rigole
+#+PROPERTY: header-args :tangle yes
+#+auto_tangle: t
+#+STARTUP: showeverything
+
+* Emacs configuration
+
+#+BEGIN_SRC emacs-lisp
+  (fido-mode t)
+  (electric-pair-mode t)
+  (winner-mode t)
+#+END_SRC
+
+* Packages
+
+Auto reloads org files
+#+BEGIN_SRC emacs-lisp
+  (use-package org-auto-tangle
+    :defer t
+    :hook (org-mode . org-auto-tangle-mode))
+#+END_SRC
+
+Makes org files way better
+#+BEGIN_SRC emacs-lisp
+  (use-package org-modern
+    :init
+    (add-hook 'org-mode-hook #'org-modern-mode)
+    (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+#+END_SRC
+
+Nice clang format package
+#+BEGIN_SRC emacs-lisp
+  (use-package clang-format+
+    :init
+    (add-hook 'c-mode-common-hook #'clang-format+-mode))
+#+END_SRC
+
+Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
+#+begin_comment
+Maybe configure that ;)
+#+end_comment
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init
+    (add-hook 'c-mode-hook #'lsp))
+#+end_src
