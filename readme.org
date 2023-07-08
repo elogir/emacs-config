@@ -12,6 +12,16 @@
   (winner-mode t)
 #+END_SRC
 
+* Global keybindings
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c e") #'(lambda ()
+				    (interactive)
+				    (split-window-right)
+				    (windmove-right)
+				    (eshell)))
+#+end_src
+
 * Packages
 
 Auto reloads org files
