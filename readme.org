@@ -36,6 +36,9 @@
   ;; Make backups of files, even when they're in version control.
   (setq vc-make-backup-files t)
 
+  ;; Defaults to UTF-8 (Hi Windows!)
+  (set-default-coding-systems 'utf-8)
+
   ;; Modes
   (fido-mode t)
   (electric-pair-mode t)
