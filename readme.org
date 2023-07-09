@@ -45,6 +45,12 @@
   (winner-mode t)
   (line-number-mode t)
   (size-indication-mode t)
+
+  ;; Removal of interface
+  (package-initialize)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
 #+END_SRC
 
 * Global keybindings
@@ -93,6 +99,78 @@ Maybe configure that ;)
     (add-hook 'c-mode-hook #'lsp))
 #+end_src
 
+Important for icons
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p))
+#+end_src
+
+Pretty good dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    :custom
+    (dashboard-items '((recents  . 5))))
+#+end_src
+
+Relative lines with a nice arrow
+#+begin_src emacs-lisp
+    (use-package linum-relative
+      :custom
+      (linum-relative-current-symbol "->")
+      :config
+      (add-hook 'prog-mode-hook #'(lambda () (interactive)
+				    (linum-relative-mode))))
+#+end_src
+
+Highlights the line on focus
+#+begin_src emacs-lisp
+      (use-package beacon
+	:config
+	(beacon-mode 1))
+#+end_src
+
+Better help menu
+#+begin_src emacs-lisp
+    (use-package helpful
+      :config ; too lazy so I copy paste
+      (global-set-key (kbd "C-h f") #'helpful-callable)
+      (global-set-key (kbd "C-h v") #'helpful-variable)
+      (global-set-key (kbd "C-h k") #'helpful-key)
+      (global-set-key (kbd "C-h x") #'helpful-command)
+      (global-set-key (kbd "C-c C-d") #'helpful-at-point))
+#+end_src
+
+Better other window
+#+begin_src emacs-lisp
+      (use-package ace-window
+	:config
+	(global-set-key (kbd "C-x o") 'ace-window))
+#+end_src
+
+Jump to word using its first letter
+#+begin_quote
+Consider trying avy
+#+end_quote
+
+#+begin_src emacs-lisp
+  (use-package ace-jump-mode
+    :config
+    (global-set-key (kbd "C-;") 'ace-jump-mode)
+    :custom
+    (ace-jump-mode-case-fold t))
+#+end_src
+
 * Hooks
 
 ** TODO dap-mode or enable toolbar and menu bar when gdb mode enabled
+
+* Helper functions
+
+#+begin_src emacs-lisp
+  (defun reload-config ()
+    (interactive)
+    (load-file "/home/rigole/.emacs.d/readme.el"))
+#+end_src
