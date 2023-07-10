@@ -54,6 +54,7 @@
 #+END_SRC
 
 * Global keybindings
+Mainly macros I use
 
 #+begin_src emacs-lisp
   ;; Opens eshell window on the right
@@ -161,6 +162,33 @@ Consider trying avy
     (global-set-key (kbd "C-;") 'ace-jump-mode)
     :custom
     (ace-jump-mode-case-fold t))
+#+end_src
+
+Preview goto-line
+#+begin_src emacs-lisp
+  (use-package goto-line-preview
+    :config
+    (global-set-key [remap goto-line] 'goto-line-preview))
+#+end_src
+
+Vertical and probably better completion buffer
+#+begin_src emacs-lisp
+    (use-package vertico
+      :elpaca (:files (:defaults "extensions/*"))
+      :config
+      (define-key vertico-map "\t" #'(lambda ()
+				       (interactive)
+  (if (or (not vertico-unobtrusive-mode)
+          (= vertico--total 1))
+      (call-interactively #'vertico-insert)
+    (vertico-multiform-unobtrusive)))))
+    #+end_src
+
+Better annotations
+#+begin_src emacs-lisp
+      (use-package marginalia
+	:init
+	(marginalia-mode))
 #+end_src
 
 * Hooks
