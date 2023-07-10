@@ -171,26 +171,6 @@ Preview goto-line
     (global-set-key [remap goto-line] 'goto-line-preview))
 #+end_src
 
-Vertical and probably better completion buffer
-#+begin_src emacs-lisp
-    (use-package vertico
-      :elpaca (:files (:defaults "extensions/*"))
-      :config
-      (define-key vertico-map "\t" #'(lambda ()
-				       (interactive)
-  (if (or (not vertico-unobtrusive-mode)
-          (= vertico--total 1))
-      (call-interactively #'vertico-insert)
-    (vertico-multiform-unobtrusive)))))
-    #+end_src
-
-Better annotations
-#+begin_src emacs-lisp
-      (use-package marginalia
-	:init
-	(marginalia-mode))
-#+end_src
-
 * Hooks
 
 ** TODO dap-mode or enable toolbar and menu bar when gdb mode enabled
