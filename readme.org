@@ -4,6 +4,14 @@
 #+auto_tangle: t
 #+STARTUP: showeverything
 
+* Table of contents :toc:
+- [[#emacs-configuration][Emacs configuration]]
+- [[#global-keybindings][Global keybindings]]
+- [[#global-packages][Global Packages]]
+  - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
+- [[#hooks][Hooks]]
+- [[#language-packages-and-config][Language packages and config]]
+
 * Emacs configuration
 
 #+BEGIN_SRC emacs-lisp
@@ -73,7 +81,7 @@ Mainly macros I use
 				  (eshell)))
 #+end_src
 
-* Packages
+* Global Packages
 
 Auto reloads org files
 #+BEGIN_SRC emacs-lisp
@@ -188,14 +196,6 @@ Still not sure but you gotta try
   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+end_src
 
-# Better focus on window (does not work / need to be configured / impacts beacon)
-# #+begin_src emacs-lisp
-#   (use-package dimmer
-#     :config
-#     (dimmer-configure-which-key)
-#     (dimmer-mode t))
-# #+end_src
-
 Indent lines (necessary)
 #+begin_src emacs-lisp
 (use-package indent-guide
@@ -212,19 +212,14 @@ Collection of Ridiculously Useful eXtensions for Emacs
   (global-set-key (kbd "M-o") 'crux-smart-open-line-above))
 #+end_src
 
-* Hooks
-
-** TODO dap-mode or enable toolbar and menu bar when gdb mode enabled
-
-* Helper functions
-
+Automatic Table of Content
 #+begin_src emacs-lisp
-(defun reload-config ()
-  (interactive)
-  (load-file "/home/rigole/.emacs.d/readme.el"))
+(use-package toc-org
+  :init
+  (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
 
-* List of packages I should look into
+** List of packages I should look into
 
 - dimmer
 - vertico
@@ -232,3 +227,9 @@ Collection of Ridiculously Useful eXtensions for Emacs
 - undo-tree or alternatives
 - yasnippet after configuring some ui
 - flycheck
+
+
+* Hooks
+dap-mode or enable toolbar and menu bar when gdb mode enabled
+
+* Language packages and config
