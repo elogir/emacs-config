@@ -228,7 +228,6 @@ Automatic Table of Content
 - yasnippet after configuring some ui
 - flycheck
 
-
 * Hooks
 dap-mode or enable toolbar and menu bar when gdb mode enabled
 
