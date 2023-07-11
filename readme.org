@@ -7,86 +7,94 @@
 * Emacs configuration
 
 #+BEGIN_SRC emacs-lisp
-  ;; Initialisation
-  (setq inhibit-default-init t
-	inhibit-startup-echo-area-message t
-	inhibit-startup-screen t
-	initial-scratch-message nil)
+;; Initialisation
+(setq inhibit-default-init t
+      inhibit-startup-echo-area-message t
+      inhibit-startup-screen t
+      initial-scratch-message nil)
 
-  ;; enable y/n answers
-  (fset 'yes-or-no-p 'y-or-n-p)
+;; enable y/n answers
+(fset 'yes-or-no-p 'y-or-n-p)
 
-  ;; Warn when opening files bigger than 100MB
-  (setq large-file-warning-threshold 100000000)
+;; Warn when opening files bigger than 100MB
+(setq large-file-warning-threshold 100000000)
 
-  ;; Keep emacs Custom-settings in separate file.
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (when (file-exists-p custom-file)
-    (load custom-file))
+;; Keep emacs Custom-settings in separate file.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
-  ;; store all backup and autosave files in the tmp dir
-  (setq backup-directory-alist
-	`((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-	`((".*" ,temporary-file-directory t)))
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
-  ;; revert buffers automatically when underlying files are changed externally
-  (global-auto-revert-mode t)
+;; revert buffers automatically when underlying files are changed externally
+(global-auto-revert-mode t)
 
-  ;; Make backups of files, even when they're in version control.
-  (setq vc-make-backup-files t)
+;; Make backups of files, even when they're in version control.
+(setq vc-make-backup-files t)
 
-  ;; Defaults to UTF-8 (Hi Windows!)
-  (set-default-coding-systems 'utf-8)
+;; Defaults to UTF-8 (Hi Windows!)
+(set-default-coding-systems 'utf-8)
 
-  ;; Modes
-  (fido-mode t)
-  (electric-pair-mode t)
-  (winner-mode t)
-  (line-number-mode t)
-  (size-indication-mode t)
+;; Modes
+(fido-mode t)
+(electric-pair-mode t)
+(winner-mode t)
+(line-number-mode t)
+(size-indication-mode t)
+(delete-selection-mode t)
 
-  ;; Removal of interface
-  (package-initialize)
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
+;; Removal of interface
+(package-initialize)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; Org mode fixes
+(setq org-src-fontify-natively t
+      org-src-window-setup 'current-window
+      org-src-strip-leading-and-trailing-blank-lines t
+      org-src-preserve-indentation t
+      org-src-tab-acts-natively t)
 #+END_SRC
 
 * Global keybindings
 Mainly macros I use
 
 #+begin_src emacs-lisp
-  ;; Opens eshell window on the right
-  (global-set-key (kbd "C-c e") #'(lambda ()
-				    (interactive)
-				    (split-window-right)
-				    (windmove-right)
-				    (eshell)))
+;; Opens eshell window on the right
+(global-set-key (kbd "C-c e") #'(lambda ()
+				  (interactive)
+				  (split-window-right)
+				  (windmove-right)
+				  (eshell)))
 #+end_src
 
 * Packages
 
 Auto reloads org files
 #+BEGIN_SRC emacs-lisp
-  (use-package org-auto-tangle
-    :defer t
-    :hook (org-mode . org-auto-tangle-mode))
+(use-package org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode))
 #+END_SRC
 
 Makes org files way better
 #+BEGIN_SRC emacs-lisp
-  (use-package org-modern
-    :init
-    (add-hook 'org-mode-hook #'org-modern-mode)
-    (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+(use-package org-modern
+  :init
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
 Nice clang format package
 #+BEGIN_SRC emacs-lisp
-  (use-package clang-format+
-    :init
-    (add-hook 'c-mode-common-hook #'clang-format+-mode))
+(use-package clang-format+
+  :init
+  (add-hook 'c-mode-common-hook #'clang-format+-mode))
 #+END_SRC
 
 Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
@@ -95,60 +103,60 @@ Maybe configure that ;)
 #+end_quote
 
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :init
-    (add-hook 'c-mode-hook #'lsp))
+(use-package lsp-mode
+  :init
+  (add-hook 'c-mode-hook #'lsp))
 #+end_src
 
 Important for icons
 #+begin_src emacs-lisp
-  (use-package all-the-icons
-    :if (display-graphic-p))
+(use-package all-the-icons
+  :if (display-graphic-p))
 #+end_src
 
 Pretty good dashboard
 #+begin_src emacs-lisp
-  (use-package dashboard
-    :ensure t
-    :config
-    (dashboard-setup-startup-hook)
-    :custom
-    (dashboard-items '((recents  . 5))))
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  :custom
+  (dashboard-items '((recents  . 5))))
 #+end_src
 
 Relative lines with a nice arrow
 #+begin_src emacs-lisp
-    (use-package linum-relative
-      :custom
-      (linum-relative-current-symbol "->")
-      :config
-      (add-hook 'prog-mode-hook #'(lambda () (interactive)
-				    (linum-relative-mode))))
+(use-package linum-relative
+  :custom
+  (linum-relative-current-symbol "->")
+  :config
+  (add-hook 'prog-mode-hook #'(lambda () (interactive)
+				(linum-relative-mode))))
 #+end_src
 
 Highlights the line on focus
 #+begin_src emacs-lisp
-      (use-package beacon
-	:config
-	(beacon-mode 1))
+(use-package beacon
+  :config
+  (beacon-mode 1))
 #+end_src
 
 Better help menu
 #+begin_src emacs-lisp
-    (use-package helpful
-      :config ; too lazy so I copy paste
-      (global-set-key (kbd "C-h f") #'helpful-callable)
-      (global-set-key (kbd "C-h v") #'helpful-variable)
-      (global-set-key (kbd "C-h k") #'helpful-key)
-      (global-set-key (kbd "C-h x") #'helpful-command)
-      (global-set-key (kbd "C-c C-d") #'helpful-at-point))
+(use-package helpful
+  :config ; too lazy so I copy paste
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+  (global-set-key (kbd "C-h x") #'helpful-command)
+  (global-set-key (kbd "C-c C-d") #'helpful-at-point))
 #+end_src
 
 Better other window
 #+begin_src emacs-lisp
-      (use-package ace-window
-	:config
-	(global-set-key (kbd "C-x o") 'ace-window))
+(use-package ace-window
+  :config
+  (global-set-key (kbd "C-x o") 'ace-window))
 #+end_src
 
 Jump to word using its first letter
@@ -157,18 +165,51 @@ Consider trying avy
 #+end_quote
 
 #+begin_src emacs-lisp
-  (use-package ace-jump-mode
-    :config
-    (global-set-key (kbd "C-;") 'ace-jump-mode)
-    :custom
-    (ace-jump-mode-case-fold t))
+(use-package ace-jump-mode
+  :config
+  (global-set-key (kbd "C-;") 'ace-jump-mode)
+  :custom
+  (ace-jump-mode-case-fold t))
 #+end_src
 
 Preview goto-line
 #+begin_src emacs-lisp
-  (use-package goto-line-preview
-    :config
-    (global-set-key [remap goto-line] 'goto-line-preview))
+(use-package goto-line-preview
+  :config
+  (global-set-key [remap goto-line] 'goto-line-preview))
+#+end_src
+
+Still not sure but you gotta try
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+
+# Better focus on window (does not work / need to be configured / impacts beacon)
+# #+begin_src emacs-lisp
+#   (use-package dimmer
+#     :config
+#     (dimmer-configure-which-key)
+#     (dimmer-mode t))
+# #+end_src
+
+Indent lines (necessary)
+#+begin_src emacs-lisp
+(use-package indent-guide
+  :init
+  (add-hook 'prog-mode-hook #'indent-guide-mode))
+#+end_src
+
+Collection of Ridiculously Useful eXtensions for Emacs
+#+begin_src emacs-lisp
+(use-package crux
+  :config
+  (global-set-key (kbd "C-k") 'crux-smart-kill-line)
+  (global-set-key (kbd "C-o") 'crux-smart-open-line)
+  (global-set-key (kbd "M-o") 'crux-smart-open-line-above))
 #+end_src
 
 * Hooks
@@ -178,7 +219,16 @@ Preview goto-line
 * Helper functions
 
 #+begin_src emacs-lisp
-  (defun reload-config ()
-    (interactive)
-    (load-file "/home/rigole/.emacs.d/readme.el"))
+(defun reload-config ()
+  (interactive)
+  (load-file "/home/rigole/.emacs.d/readme.el"))
 #+end_src
+
+* List of packages I should look into
+
+- dimmer
+- vertico
+- move-dup
+- undo-tree or alternatives
+- yasnippet after configuring some ui
+- flycheck
