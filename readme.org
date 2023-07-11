@@ -6,8 +6,28 @@
 
 * Table of contents :toc:
 - [[#emacs-configuration][Emacs configuration]]
+  - [[#garbage-collector-config-stolen-from-likhon-baroy][Garbage collector config (stolen from Likhon-baRoy)]]
 - [[#global-keybindings][Global keybindings]]
 - [[#global-packages][Global Packages]]
+  - [[#org-auto-tangle][org-auto-tangle]]
+  - [[#org-moder][org-moder]]
+  - [[#clang-format][clang-format+]]
+  - [[#lsp-mode][lsp-mode]]
+  - [[#lsp-ui][lsp-ui]]
+  - [[#all-the-icons][all-the-icons]]
+  - [[#dashboard][dashboard]]
+  - [[#linum-relative][linum-relative]]
+  - [[#beacon][beacon]]
+  - [[#helpful][helpful]]
+  - [[#ace-window][ace-window]]
+  - [[#ace-jump-mode][ace-jump-mode]]
+  - [[#goto-line-preview][goto-line-preview]]
+  - [[#orderless][orderless]]
+  - [[#indent-guide][indent-guide]]
+  - [[#crux][crux]]
+  - [[#toc-org][toc-org]]
+  - [[#flycheck][flycheck]]
+  - [[#tree-sitter][tree-sitter]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
@@ -69,6 +89,42 @@
       org-src-tab-acts-natively t)
 #+END_SRC
 
+** Garbage collector config (stolen from Likhon-baRoy)
+
+#+begin_src emacs-lisp
+;; BetterGC
+(defvar better-gc-cons-threshold 134217728 ; 128mb
+  "If you experience freezing, decrease this.
+If you experience stuttering, increase this.")
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold better-gc-cons-threshold)
+            (setq file-name-handler-alist file-name-handler-alist-original)
+            (makunbound 'file-name-handler-alist-original)))
+;; -BetterGC
+
+;; AutoGC
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (if (boundp 'after-focus-change-function)
+                (add-function :after after-focus-change-function
+                              (lambda ()
+                                (unless (frame-focus-state)
+                                  (garbage-collect))))
+              (add-hook 'after-focus-change-function 'garbage-collect))
+            (defun gc-minibuffer-setup-hook ()
+              (setq gc-cons-threshold (* better-gc-cons-threshold 2)))
+
+            (defun gc-minibuffer-exit-hook ()
+              (garbage-collect)
+              (setq gc-cons-threshold better-gc-cons-threshold))
+
+            (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
+            (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
+;; -AutoGC
+#+end_src
+
 * Global keybindings
 Mainly macros I use
 
@@ -83,6 +139,7 @@ Mainly macros I use
 
 * Global Packages
 
+** org-auto-tangle
 Auto reloads org files
 #+BEGIN_SRC emacs-lisp
 (use-package org-auto-tangle
@@ -90,6 +147,7 @@ Auto reloads org files
   :hook (org-mode . org-auto-tangle-mode))
 #+END_SRC
 
+** org-moder
 Makes org files way better
 #+BEGIN_SRC emacs-lisp
 (use-package org-modern
@@ -98,6 +156,7 @@ Makes org files way better
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
+** clang-format+
 Nice clang format package
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format+
@@ -105,6 +164,7 @@ Nice clang format package
   (add-hook 'c-mode-common-hook #'clang-format+-mode))
 #+END_SRC
 
+** lsp-mode
 Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
 #+begin_quote
 Maybe configure that ;)
@@ -113,15 +173,24 @@ Maybe configure that ;)
 #+begin_src emacs-lisp
 (use-package lsp-mode
   :init
-  (add-hook 'c-mode-hook #'lsp))
+  (add-hook 'c-mode-hook #'lsp)
+  (add-hook 'web-mode #'lsp))
 #+end_src
 
+** lsp-ui
+Lsp-ui
+#+begin_src emacs-lisp
+(use-package lsp-ui)
+#+end_src
+
+** all-the-icons
 Important for icons
 #+begin_src emacs-lisp
 (use-package all-the-icons
   :if (display-graphic-p))
 #+end_src
 
+** dashboard
 Pretty good dashboard
 #+begin_src emacs-lisp
 (use-package dashboard
@@ -129,9 +198,12 @@ Pretty good dashboard
   :config
   (dashboard-setup-startup-hook)
   :custom
-  (dashboard-items '((recents  . 5))))
+  (dashboard-projects-backend 'project-el)
+  (dashboard-items '((recents  . 5)
+                     (projects . 5))))
 #+end_src
 
+** linum-relative
 Relative lines with a nice arrow
 #+begin_src emacs-lisp
 (use-package linum-relative
@@ -142,6 +214,7 @@ Relative lines with a nice arrow
 				(linum-relative-mode))))
 #+end_src
 
+** beacon
 Highlights the line on focus
 #+begin_src emacs-lisp
 (use-package beacon
@@ -149,6 +222,7 @@ Highlights the line on focus
   (beacon-mode 1))
 #+end_src
 
+** helpful
 Better help menu
 #+begin_src emacs-lisp
 (use-package helpful
@@ -160,6 +234,7 @@ Better help menu
   (global-set-key (kbd "C-c C-d") #'helpful-at-point))
 #+end_src
 
+** ace-window
 Better other window
 #+begin_src emacs-lisp
 (use-package ace-window
@@ -167,6 +242,7 @@ Better other window
   (global-set-key (kbd "C-x o") 'ace-window))
 #+end_src
 
+** ace-jump-mode
 Jump to word using its first letter
 #+begin_quote
 Consider trying avy
@@ -180,6 +256,7 @@ Consider trying avy
   (ace-jump-mode-case-fold t))
 #+end_src
 
+** goto-line-preview
 Preview goto-line
 #+begin_src emacs-lisp
 (use-package goto-line-preview
@@ -187,6 +264,7 @@ Preview goto-line
   (global-set-key [remap goto-line] 'goto-line-preview))
 #+end_src
 
+** orderless
 Still not sure but you gotta try
 #+begin_src emacs-lisp
 (use-package orderless
@@ -196,6 +274,7 @@ Still not sure but you gotta try
   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+end_src
 
+** indent-guide
 Indent lines (necessary)
 #+begin_src emacs-lisp
 (use-package indent-guide
@@ -203,6 +282,7 @@ Indent lines (necessary)
   (add-hook 'prog-mode-hook #'indent-guide-mode))
 #+end_src
 
+** crux
 Collection of Ridiculously Useful eXtensions for Emacs
 #+begin_src emacs-lisp
 (use-package crux
@@ -212,11 +292,46 @@ Collection of Ridiculously Useful eXtensions for Emacs
   (global-set-key (kbd "M-o") 'crux-smart-open-line-above))
 #+end_src
 
+** toc-org
 Automatic Table of Content
 #+begin_src emacs-lisp
 (use-package toc-org
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
+#+end_src
+
+# Global web mode
+# #+begin_src emacs-lisp
+# (use-package web-mode
+#   :config
+#   (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.blade.php\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+#   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode)))
+# #+end_src
+
+** flycheck
+Flycheck to replace flymake
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+end_src
+
+** tree-sitter
+Tree-sitter (Should be removed after upgrading to Emacs 29+)
+#+begin_src emacs-lisp
+(use-package tree-sitter)
+(use-package tree-sitter-langs
+  :after (tree-sitter)
+  :config
+  (global-tree-sitter-mode))
 #+end_src
 
 ** List of packages I should look into
