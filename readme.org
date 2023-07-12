@@ -22,7 +22,6 @@
   - [[#ace-window][ace-window]]
   - [[#ace-jump-mode][ace-jump-mode]]
   - [[#goto-line-preview][goto-line-preview]]
-  - [[#orderless][orderless]]
   - [[#indent-guide][indent-guide]]
   - [[#crux][crux]]
   - [[#toc-org][toc-org]]
@@ -87,6 +86,9 @@
       org-src-strip-leading-and-trailing-blank-lines t
       org-src-preserve-indentation t
       org-src-tab-acts-natively t)
+
+;; quick optimization for lsps
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
 #+END_SRC
 
 ** Garbage collector config (stolen from Likhon-baRoy)
@@ -99,9 +101,7 @@ If you experience stuttering, increase this.")
 
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold better-gc-cons-threshold)
-            (setq file-name-handler-alist file-name-handler-alist-original)
-            (makunbound 'file-name-handler-alist-original)))
+            (setq gc-cons-threshold better-gc-cons-threshold)))
 ;; -BetterGC
 
 ;; AutoGC
@@ -174,13 +174,17 @@ Maybe configure that ;)
 (use-package lsp-mode
   :init
   (add-hook 'c-mode-hook #'lsp)
-  (add-hook 'web-mode #'lsp))
+  (add-hook 'web-mode-hook #'lsp))
 #+end_src
 
 ** lsp-ui
 Lsp-ui
 #+begin_src emacs-lisp
-(use-package lsp-ui)
+(use-package lsp-ui
+  :custom
+  (lsp-ui-doc-show-with-cursor nil)
+  (lsp-ui-doc-show-with-mouse nil)
+  (define-key lsp-mode-map (kbd "C-c d") 'lsp-ui-doc-glance))
 #+end_src
 
 ** all-the-icons
@@ -264,16 +268,6 @@ Preview goto-line
   (global-set-key [remap goto-line] 'goto-line-preview))
 #+end_src
 
-** orderless
-Still not sure but you gotta try
-#+begin_src emacs-lisp
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
-#+end_src
-
 ** indent-guide
 Indent lines (necessary)
 #+begin_src emacs-lisp
@@ -300,21 +294,24 @@ Automatic Table of Content
   (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
 
-# Global web mode
-# #+begin_src emacs-lisp
-# (use-package web-mode
-#   :config
-#   (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.blade.php\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
-#   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode)))
-# #+end_src
+Global web mode
+#+begin_src emacs-lisp
+(use-package web-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.blade.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (setq web-mode-engines-alist
+      '(("php"    . "\\.phtml\\'")
+        ("blade"  . "\\.blade\\."))))
+#+end_src
 
 ** flycheck
 Flycheck to replace flymake
