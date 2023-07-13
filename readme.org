@@ -27,9 +27,12 @@
   - [[#toc-org][toc-org]]
   - [[#flycheck][flycheck]]
   - [[#tree-sitter][tree-sitter]]
+  - [[#yasnippet][yasnippet]]
+  - [[#hydra][hydra]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
+  - [[#laravel][Laravel]]
 
 * Emacs configuration
 
@@ -95,34 +98,34 @@
 
 #+begin_src emacs-lisp
 ;; BetterGC
-(defvar better-gc-cons-threshold 134217728 ; 128mb
-  "If you experience freezing, decrease this.
-If you experience stuttering, increase this.")
+;; (defvar better-gc-cons-threshold 134217728 ; 128mb
+;;   "If you experience freezing, decrease this.
+;; If you experience stuttering, increase this.")
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold better-gc-cons-threshold)))
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (setq gc-cons-threshold better-gc-cons-threshold)))
 ;; -BetterGC
 
-;; AutoGC
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (if (boundp 'after-focus-change-function)
-                (add-function :after after-focus-change-function
-                              (lambda ()
-                                (unless (frame-focus-state)
-                                  (garbage-collect))))
-              (add-hook 'after-focus-change-function 'garbage-collect))
-            (defun gc-minibuffer-setup-hook ()
-              (setq gc-cons-threshold (* better-gc-cons-threshold 2)))
+;; ;; AutoGC
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (if (boundp 'after-focus-change-function)
+;;                 (add-function :after after-focus-change-function
+;;                               (lambda ()
+;;                                 (unless (frame-focus-state)
+;;                                   (garbage-collect))))
+;;               (add-hook 'after-focus-change-function 'garbage-collect))
+;;             (defun gc-minibuffer-setup-hook ()
+;;               (setq gc-cons-threshold (* better-gc-cons-threshold 2)))
 
-            (defun gc-minibuffer-exit-hook ()
-              (garbage-collect)
-              (setq gc-cons-threshold better-gc-cons-threshold))
+;;             (defun gc-minibuffer-exit-hook ()
+;;               (garbage-collect)
+;;               (setq gc-cons-threshold better-gc-cons-threshold))
 
-            (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
-            (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
-;; -AutoGC
+;;             (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
+;;             (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
+;; ;; -AutoGC
 #+end_src
 
 * Global keybindings
@@ -135,6 +138,9 @@ Mainly macros I use
 				  (split-window-right)
 				  (windmove-right)
 				  (eshell)))
+
+;; ibuffer is actually better, why is it not bound by default
+(global-set-key [remap list-buffers] 'ibuffer)
 #+end_src
 
 * Global Packages
@@ -181,10 +187,13 @@ Maybe configure that ;)
 Lsp-ui
 #+begin_src emacs-lisp
 (use-package lsp-ui
+  :defer t
   :custom
   (lsp-ui-doc-show-with-cursor nil)
   (lsp-ui-doc-show-with-mouse nil)
-  (define-key lsp-mode-map (kbd "C-c d") 'lsp-ui-doc-glance))
+  :bind  
+  (:map lsp-mode-map
+        ("C-c d" . lsp-ui-doc-glance)))
 #+end_src
 
 ** all-the-icons
@@ -331,16 +340,76 @@ Tree-sitter (Should be removed after upgrading to Emacs 29+)
   (global-tree-sitter-mode))
 #+end_src
 
+** yasnippet
+Snippets
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :init
+  (add-hook 'web-mode-hook #'yas-minor-mode)
+  (add-hook 'org-mode-hook #'yas-minor-mode)
+  :config
+  (yas-reload-all)
+  (define-key yas-minor-mode-map (kbd "C-c SPC") 'yas-expand)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "<tab>") nil))
+#+end_src
+
+** hydra
+Creates hydras
+#+begin_src emacs-lisp
+(use-package hydra
+  :ensure t)
+#+end_src
+
+#+RESULTS:
+
 ** List of packages I should look into
 
 - dimmer
 - vertico
 - move-dup
 - undo-tree or alternatives
-- yasnippet after configuring some ui
 - flycheck
 
 * Hooks
 dap-mode or enable toolbar and menu bar when gdb mode enabled
 
 * Language packages and config
+
+#+begin_src emacs-lisp
+(elpaca-wait)
+#+end_src
+
+** Laravel
+*** Laravel projectile
+
+#+begin_src emacs-lisp
+(defhydra hydra-laravel (:color blue)
+    "
+^Laravel^
+^^^^^^^^------
+_m_: model
+_v_: view
+_c_: controler
+"
+    ("m" projectile-laravel-find-model)
+    ("v" projectile-laravel-find-view)
+    ("c" projectile-laravel-find-controller))
+
+(use-package projectile-laravel
+  :after hydra
+  :elpaca (projectile-laravel :host github :repo "strikerlulu/projectile-laravel"))
+
+(elpaca-wait)
+
+(defun laravel-toggle ()
+  (interactive)
+  (if (bound-and-true-p projectile-laravel-global-mode)
+      (progn
+        (projectile-laravel-global-mode -1)
+        (global-set-key (kbd "C-c l") nil))
+    (progn
+      (projectile-laravel-global-mode 1)
+      (global-set-key (kbd "C-c l") 'hydra-laravel/body))))
+  #+end_src
