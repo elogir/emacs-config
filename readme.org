@@ -93,7 +93,8 @@
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
 ; Fixing dired mouse click
-(define-key dired-mode-map [mouse-2] 'dired-mouse-find-file)
+(with-eval-after-load 'dired
+  (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
 #+END_SRC
 
 * Global keybindings
