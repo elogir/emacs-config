@@ -6,7 +6,6 @@
 
 * Table of contents :toc:
 - [[#emacs-configuration][Emacs configuration]]
-  - [[#garbage-collector-config-stolen-from-likhon-baroy][Garbage collector config (stolen from Likhon-baRoy)]]
 - [[#global-keybindings][Global keybindings]]
 - [[#global-packages][Global Packages]]
   - [[#org-auto-tangle][org-auto-tangle]]
@@ -92,41 +91,10 @@
 
 ;; quick optimization for lsps
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+; Fixing dired mouse click
+(define-key dired-mode-map [mouse-2] 'dired-mouse-find-file)
 #+END_SRC
-
-** Garbage collector config (stolen from Likhon-baRoy)
-
-#+begin_src emacs-lisp
-;; BetterGC
-;; (defvar better-gc-cons-threshold 134217728 ; 128mb
-;;   "If you experience freezing, decrease this.
-;; If you experience stuttering, increase this.")
-
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (setq gc-cons-threshold better-gc-cons-threshold)))
-;; -BetterGC
-
-;; ;; AutoGC
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (if (boundp 'after-focus-change-function)
-;;                 (add-function :after after-focus-change-function
-;;                               (lambda ()
-;;                                 (unless (frame-focus-state)
-;;                                   (garbage-collect))))
-;;               (add-hook 'after-focus-change-function 'garbage-collect))
-;;             (defun gc-minibuffer-setup-hook ()
-;;               (setq gc-cons-threshold (* better-gc-cons-threshold 2)))
-
-;;             (defun gc-minibuffer-exit-hook ()
-;;               (garbage-collect)
-;;               (setq gc-cons-threshold better-gc-cons-threshold))
-
-;;             (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
-;;             (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
-;; ;; -AutoGC
-#+end_src
 
 * Global keybindings
 Mainly macros I use
@@ -179,6 +147,7 @@ Maybe configure that ;)
 #+begin_src emacs-lisp
 (use-package lsp-mode
   :init
+  (setq lsp-intelephense-licence-key "00UDX5WYE44TGEN")
   (add-hook 'c-mode-hook #'lsp)
   (add-hook 'web-mode-hook #'lsp))
 #+end_src
@@ -342,6 +311,9 @@ Tree-sitter (Should be removed after upgrading to Emacs 29+)
 
 ** yasnippet
 Snippets
+#+begin_quote
+TODO: disable format on yasnippet-expand (lsp-mode!!!)
+#+end_quote
 #+begin_src emacs-lisp
 (use-package yasnippet
   :ensure t
