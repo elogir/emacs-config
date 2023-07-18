@@ -48,3 +48,4 @@
 (let ((file-name-handler-alist nil))
     (require 'org)
     (org-babel-load-file (expand-file-name "readme.org" user-emacs-directory)))
+(put 'erase-buffer 'disabled nil)

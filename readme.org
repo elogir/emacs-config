@@ -11,6 +11,7 @@
   - [[#org-auto-tangle][org-auto-tangle]]
   - [[#org-moder][org-moder]]
   - [[#clang-format][clang-format+]]
+  - [[#whichkey][Whichkey]]
   - [[#lsp-mode][lsp-mode]]
   - [[#lsp-ui][lsp-ui]]
   - [[#all-the-icons][all-the-icons]]
@@ -24,7 +25,6 @@
   - [[#indent-guide][indent-guide]]
   - [[#crux][crux]]
   - [[#toc-org][toc-org]]
-  - [[#flycheck][flycheck]]
   - [[#tree-sitter][tree-sitter]]
   - [[#yasnippet][yasnippet]]
   - [[#hydra][hydra]]
@@ -47,6 +47,9 @@
 
 ;; Warn when opening files bigger than 100MB
 (setq large-file-warning-threshold 100000000)
+
+;; ignore some warnings
+(setq warning-minimum-level :emergency)
 
 ;; Keep emacs Custom-settings in separate file.
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -139,6 +142,15 @@ Nice clang format package
   (add-hook 'c-mode-common-hook #'clang-format+-mode))
 #+END_SRC
 
+** Whichkey
+Better help for keys
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :config
+  (which-key-mode))
+#+end_src
+
 ** lsp-mode
 Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
 #+begin_quote
@@ -150,7 +162,12 @@ Maybe configure that ;)
   :init
   (setq lsp-intelephense-licence-key "00UDX5WYE44TGEN")
   (add-hook 'c-mode-hook #'lsp)
-  (add-hook 'web-mode-hook #'lsp))
+  (add-hook 'web-mode-hook #'lsp)
+  :hook (lsp-mode . (lambda ()
+                      (let ((lsp-keymap-prefix "C-c l"))
+                        (lsp-enable-which-key-integration))))
+  :config
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
 #+end_src
 
 ** lsp-ui
@@ -165,6 +182,21 @@ Lsp-ui
   (:map lsp-mode-map
         ("C-c d" . lsp-ui-doc-glance)))
 #+end_src
+
+# ** Eglot
+
+# #+begin_src emacs-lisp
+# (require 'eglot)
+# (add-to-list 'eglot-server-programs
+#              '((web-mode :language-id "php") . ("intelephense" "--stdio" :initializationOptions
+# 						(:licenseKey "00UDX5WYE44TGEN"))))
+
+
+# (add-hook 'web-mode-hook #'eglot-ensure)
+# (setq eldoc-documentation-strategy 'eldoc-documentation-default)
+# #+end_src
+
+
 
 ** all-the-icons
 Important for icons
@@ -292,13 +324,13 @@ Global web mode
         ("blade"  . "\\.blade\\."))))
 #+end_src
 
-** flycheck
-Flycheck to replace flymake
-#+begin_src emacs-lisp
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-#+end_src
+# ** flycheck
+# Flycheck to replace flymake
+##+begin_src emacs-lisp
+#(use-package flycheck
+#  :ensure t
+#:init (global-flycheck-mode))
+##+end_src
 
 ** tree-sitter
 Tree-sitter (Should be removed after upgrading to Emacs 29+)
