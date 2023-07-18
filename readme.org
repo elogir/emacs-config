@@ -361,7 +361,7 @@ TODO: disable format on yasnippet-expand (lsp-mode!!!)
 #+end_src
 
 ** hydra
-Creates hydras
+Creates hydras (Not used atm)
 #+begin_src emacs-lisp
 (use-package hydra
   :ensure t)
