@@ -28,10 +28,12 @@
   - [[#tree-sitter][tree-sitter]]
   - [[#yasnippet][yasnippet]]
   - [[#hydra][hydra]]
+  - [[#company][Company]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
   - [[#laravel][Laravel]]
+- [[#themes][Themes]]
 
 * Emacs configuration
 
@@ -161,6 +163,7 @@ Maybe configure that ;)
 (use-package lsp-mode
   :init
   (setq lsp-intelephense-licence-key "00UDX5WYE44TGEN")
+  (setq lsp-intelephense-format-enable nil)
   (add-hook 'c-mode-hook #'lsp)
   (add-hook 'web-mode-hook #'lsp)
   :hook (lsp-mode . (lambda ()
@@ -180,7 +183,8 @@ Lsp-ui
   (lsp-ui-doc-show-with-mouse nil)
   :bind  
   (:map lsp-mode-map
-        ("C-c d" . lsp-ui-doc-glance)))
+	("M-TAB" . company-complete)
+        ("C-c d" . lsp-ui-doc-toggle)))
 #+end_src
 
 # ** Eglot
@@ -367,6 +371,23 @@ Creates hydras (Not used atm)
   :ensure t)
 #+end_src
 
+** Company
+completion ui
+#+begin_src emacs-lisp
+(use-package company
+  :after lsp-mode
+  :custom
+  (company-idle-delay nil)
+  (company-frontends '(company-pseudo-tooltip-frontend))
+  (company-tooltip-align-annotations t)
+  (company-tooltip-limit 6)
+  (company-tooltip-minimum 6)
+  :config
+  (global-company-mode)
+  (company-vscode-light-icons-margin)
+  (company-search-words-in-any-order-regexp))
+  #+end_src
+
 #+RESULTS:
 
 ** List of packages I should look into
@@ -418,3 +439,11 @@ _c_: controler
       (projectile-laravel-global-mode 1)
       (global-set-key (kbd "C-c l") 'hydra-laravel/body))))
   #+end_src
+
+* Themes
+
+My default theme is the default emacs theme, however sometimes I want something different
+
+#+begin_src emacs-lisp
+(defun custom-theme ())
+#+end_src
