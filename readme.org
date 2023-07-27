@@ -11,7 +11,7 @@
   - [[#org-auto-tangle][org-auto-tangle]]
   - [[#org-moder][org-moder]]
   - [[#clang-format][clang-format+]]
-  - [[#whichkey][Whichkey]]
+  - [[#whichkey][whichkey]]
   - [[#lsp-mode][lsp-mode]]
   - [[#lsp-ui][lsp-ui]]
   - [[#all-the-icons][all-the-icons]]
@@ -28,12 +28,15 @@
   - [[#tree-sitter][tree-sitter]]
   - [[#yasnippet][yasnippet]]
   - [[#hydra][hydra]]
-  - [[#company][Company]]
+  - [[#company][company]]
+  - [[#nov][nov]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
+- [[#themes][Themes]]
+  - [[#catpuccin][Catpuccin]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
   - [[#laravel][Laravel]]
-- [[#themes][Themes]]
+- [[#themes-1][Themes]]
 
 * Emacs configuration
 
@@ -144,7 +147,7 @@ Nice clang format package
   (add-hook 'c-mode-common-hook #'clang-format+-mode))
 #+END_SRC
 
-** Whichkey
+** whichkey
 Better help for keys
 
 #+begin_src emacs-lisp
@@ -237,6 +240,8 @@ Relative lines with a nice arrow
 Highlights the line on focus
 #+begin_src emacs-lisp
 (use-package beacon
+  :custom
+  (beacon-color "#00fa9a")
   :config
   (beacon-mode 1))
 #+end_src
@@ -371,7 +376,7 @@ Creates hydras (Not used atm)
   :ensure t)
 #+end_src
 
-** Company
+** company
 completion ui
 #+begin_src emacs-lisp
 (use-package company
@@ -388,6 +393,14 @@ completion ui
   (company-search-words-in-any-order-regexp))
   #+end_src
 
+** nov
+ebook reader
+#+begin_src emacs-lisp
+(use-package nov :elpaca (:depth nil)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+#+end_src
+
 #+RESULTS:
 
 ** List of packages I should look into
@@ -397,6 +410,17 @@ completion ui
 - move-dup
 - undo-tree or alternatives
 - flycheck
+
+* Themes
+
+** Catpuccin
+#+begin_src emacs-lisp
+(use-package catppuccin-theme
+  :custom
+  (catppuccin-flavor 'latte)
+  :config
+  (load-theme 'catppuccin :no-confirm))
+#+end_src
 
 * Hooks
 dap-mode or enable toolbar and menu bar when gdb mode enabled
