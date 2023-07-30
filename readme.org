@@ -30,7 +30,6 @@
   - [[#hydra][hydra]]
   - [[#company][company]]
   - [[#nov][nov]]
-  - [[#dimmer][dimmer]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -401,19 +400,6 @@ ebook reader
   :config
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 #+end_src
-
-** dimmer
-dims unfocused window
-#+begin_src emacs-lisp
-(use-package dimmer
-  :custom
-  (dimmer-fraction 0.4)
-  :config
-  (dimmer-configure-which-key)
-  (dimmer-mode t))
-#+end_src
-
-#+RESULTS:
 
 ** List of packages I should look into
 
