@@ -9,7 +9,7 @@
 - [[#global-keybindings][Global keybindings]]
 - [[#global-packages][Global Packages]]
   - [[#org-auto-tangle][org-auto-tangle]]
-  - [[#org-moder][org-moder]]
+  - [[#org-modern][org-modern]]
   - [[#clang-format][clang-format+]]
   - [[#whichkey][whichkey]]
   - [[#lsp-mode][lsp-mode]]
@@ -133,7 +133,7 @@ Auto reloads org files
   :hook (org-mode . org-auto-tangle-mode))
 #+END_SRC
 
-** org-moder
+** org-modern
 Makes org files way better
 #+BEGIN_SRC emacs-lisp
 (use-package org-modern
