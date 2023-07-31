@@ -25,7 +25,6 @@
   - [[#indent-guide][indent-guide]]
   - [[#crux][crux]]
   - [[#toc-org][toc-org]]
-  - [[#tree-sitter][tree-sitter]]
   - [[#yasnippet][yasnippet]]
   - [[#hydra][hydra]]
   - [[#company][company]]
@@ -345,21 +344,8 @@ Global web mode
 #:init (global-flycheck-mode))
 ##+end_src
 
-** tree-sitter
-Tree-sitter (Should be removed after upgrading to Emacs 29+)
-#+begin_src emacs-lisp
-(use-package tree-sitter)
-(use-package tree-sitter-langs
-  :after (tree-sitter)
-  :config
-  (global-tree-sitter-mode))
-#+end_src
-
 ** yasnippet
 Snippets
-#+begin_quote
-TODO: disable format on yasnippet-expand (lsp-mode!!!)
-#+end_quote
 #+begin_src emacs-lisp
 (use-package yasnippet
   :ensure t
@@ -375,7 +361,7 @@ TODO: disable format on yasnippet-expand (lsp-mode!!!)
 #+end_src
 
 ** hydra
-Creates hydras (Not used atm)
+Creates hydras
 #+begin_src emacs-lisp
 (use-package hydra
   :ensure t)
