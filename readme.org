@@ -38,9 +38,7 @@
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
   - [[#laravel][Laravel]]
-- [[#vlang][Vlang]]
-  - [[#v-mode][v-mode]]
-  - [[#v-analyzer][v-analyzer]]
+  - [[#vlang][Vlang]]
 - [[#themes-1][Themes]]
 
 * Emacs configuration
@@ -450,6 +448,7 @@ dap-mode or enable toolbar and menu bar when gdb mode enabled
 #+end_src
 
 ** Laravel
+
 *** Laravel projectile
 
 #+begin_src emacs-lisp
@@ -482,15 +481,15 @@ _c_: controler
       (global-set-key (kbd "C-c p") 'hydra-laravel/body))))
   #+end_src
 
-* Vlang
+** Vlang
 
-** v-mode
+*** v-mode
 #+begin_src emacs-lisp
 (use-package vlang-mode
   :elpaca (vlang-mode :host github :repo "Naheel-Azawy/vlang-mode"))
 #+end_src
 
-** v-analyzer
+*** v-analyzer
 #+begin_src emacs-lisp
 (with-eval-after-load 'lsp-mode
   (add-to-list 'lsp-language-id-configuration
