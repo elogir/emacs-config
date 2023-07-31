@@ -480,7 +480,7 @@ _c_: controler
     '(vlang-mode . "vlang"))
 
   (lsp-register-client
-    (make-lsp-client :new-connection (lsp-stdio-connection "/home/rigole/.config/v-analyzer/bin/v-analyzer")
+    (make-lsp-client :new-connection (lsp-stdio-connection (expand-file-name "~/.config/v-analyzer/bin/v-analyzer"))
                      :activation-fn (lsp-activate-on "vlang")
                      :server-id 'v-analyzer)))
 #+end_src
