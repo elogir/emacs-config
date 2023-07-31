@@ -31,6 +31,7 @@
   - [[#company][company]]
   - [[#nov][nov]]
   - [[#treesit-auto][treesit auto]]
+  - [[#vterm][vterm]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -414,6 +415,11 @@ ebook reader
   (treesit-auto-install 'prompt)
   :config
   (global-treesit-auto-mode))
+#+end_src
+
+** vterm
+#+begin_src emacs-lisp
+(use-package vterm)
 #+end_src
 
 ** List of packages I should look into
