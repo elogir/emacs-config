@@ -30,13 +30,16 @@
   - [[#hydra][hydra]]
   - [[#company][company]]
   - [[#nov][nov]]
-  - [[#dimmer][dimmer]]
+  - [[#treesit-auto][treesit auto]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
   - [[#laravel][Laravel]]
+- [[#vlang][Vlang]]
+  - [[#v-mode][v-mode]]
+  - [[#v-analyzer][v-analyzer]]
 - [[#themes-1][Themes]]
 
 * Emacs configuration
@@ -169,6 +172,7 @@ Maybe configure that ;)
   (setq lsp-intelephense-licence-key "00UDX5WYE44TGEN")
   (setq lsp-intelephense-format-enable nil)
   (add-hook 'c-mode-hook #'lsp)
+  (add-hook 'vlang-mode-hook #'lsp)
   (add-hook 'web-mode-hook #'lsp)
   :hook (lsp-mode . (lambda ()
                       (let ((lsp-keymap-prefix "C-c l"))
@@ -363,6 +367,7 @@ TODO: disable format on yasnippet-expand (lsp-mode!!!)
   :init
   (add-hook 'web-mode-hook #'yas-minor-mode)
   (add-hook 'org-mode-hook #'yas-minor-mode)
+  (add-hook 'vlang-mode-hook #'yas-minor-mode)
   :config
   (yas-reload-all)
   (define-key yas-minor-mode-map (kbd "C-c SPC") 'yas-expand)
@@ -402,18 +407,14 @@ ebook reader
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 #+end_src
 
-** dimmer
-dims unfocused window
+** treesit auto
 #+begin_src emacs-lisp
-(use-package dimmer
+(use-package treesit-auto
   :custom
-  (dimmer-fraction 0.4)
+  (treesit-auto-install 'prompt)
   :config
-  (dimmer-configure-which-key)
-  (dimmer-mode t))
+  (global-treesit-auto-mode))
 #+end_src
-
-#+RESULTS:
 
 ** List of packages I should look into
 
@@ -469,11 +470,31 @@ _c_: controler
   (if (bound-and-true-p projectile-laravel-global-mode)
       (progn
         (projectile-laravel-global-mode -1)
-        (global-set-key (kbd "C-c l") nil))
+        (global-set-key (kbd "C-c p") nil))
     (progn
       (projectile-laravel-global-mode 1)
-      (global-set-key (kbd "C-c l") 'hydra-laravel/body))))
+      (global-set-key (kbd "C-c p") 'hydra-laravel/body))))
   #+end_src
+
+* Vlang
+
+** v-mode
+#+begin_src emacs-lisp
+(use-package vlang-mode
+  :elpaca (vlang-mode :host github :repo "Naheel-Azawy/vlang-mode"))
+#+end_src
+
+** v-analyzer
+#+begin_src emacs-lisp
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-language-id-configuration
+    '(vlang-mode . "vlang"))
+
+  (lsp-register-client
+    (make-lsp-client :new-connection (lsp-stdio-connection "/home/rigole/.config/v-analyzer/bin/v-analyzer")
+                     :activation-fn (lsp-activate-on "vlang")
+                     :server-id 'v-analyzer)))
+#+end_src
 
 * Themes
 
