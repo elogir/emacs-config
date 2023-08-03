@@ -31,6 +31,7 @@
   - [[#nov][nov]]
   - [[#treesit-auto][treesit-auto]]
   - [[#vterm][vterm]]
+  - [[#flycheck][flycheck]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -190,7 +191,7 @@ Lsp-ui
   :bind  
   (:map lsp-mode-map
 	("M-TAB" . company-complete)
-        ("C-c d" . lsp-ui-doc-toggle)))
+        ("C-c d" . lsp-ui-doc-glance)))
 #+end_src
 
 # ** Eglot
@@ -404,6 +405,15 @@ ebook reader
 ** vterm
 #+begin_src emacs-lisp
 (use-package vterm)
+#+end_src
+
+** flycheck
+Flymake creates junk files and flycheck is better anyway
+
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
 #+end_src
 
 ** List of packages I should look into
