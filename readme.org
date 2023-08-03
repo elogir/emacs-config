@@ -32,6 +32,7 @@
   - [[#treesit-auto][treesit-auto]]
   - [[#vterm][vterm]]
   - [[#flycheck][flycheck]]
+  - [[#delight][delight]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -129,6 +130,7 @@ Mainly macros I use
 Auto reloads org files
 #+BEGIN_SRC emacs-lisp
 (use-package org-auto-tangle
+  :delight
   :defer t
   :hook (org-mode . org-auto-tangle-mode))
 #+END_SRC
@@ -137,17 +139,16 @@ Auto reloads org files
 Makes org files way better
 #+BEGIN_SRC emacs-lisp
 (use-package org-modern
-  :init
-  (add-hook 'org-mode-hook #'org-modern-mode)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+  :delight
+  :hook ((org-mode . org-modern-mode)
+	 (org-agenda-finalize . org-modern-agenda)))
 #+END_SRC
 
 ** clang-format+
 Nice clang format package
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format+
-  :init
-  (add-hook 'c-mode-common-hook #'clang-format+-mode))
+  :hook (c-mode-common . clang-format+-mode))
 #+END_SRC
 
 ** which-key
@@ -155,59 +156,42 @@ Better help for keys
 
 #+begin_src emacs-lisp
 (use-package which-key
-  :config
+  :delight
+  :init
   (which-key-mode))
 #+end_src
 
 ** lsp-mode
 Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
-#+begin_quote
-Maybe configure that ;)
-#+end_quote
 
 #+begin_src emacs-lisp
 (use-package lsp-mode
-  :init
-  (setq lsp-intelephense-licence-key "00UDX5WYE44TGEN")
-  (setq lsp-intelephense-format-enable nil)
-  (add-hook 'c-mode-hook #'lsp)
-  (add-hook 'vlang-mode-hook #'lsp)
-  (add-hook 'web-mode-hook #'lsp)
-  :hook (lsp-mode . (lambda ()
+  :after company
+  :custom
+  (lsp-intelephense-licence-key "00UDX5WYE44TGEN")
+  (lsp-intelephense-format-enable nil)
+  :hook ((lsp-mode . (lambda ()
                       (let ((lsp-keymap-prefix "C-c l"))
                         (lsp-enable-which-key-integration))))
-  :config
-  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
+	 (c-mode . lsp)
+	 (vland-mode . lsp)
+	 (web-mode . lsp))
+  :bind (:map lsp-mode-map
+	      ("C-c l" . lsp-command-map)))
 #+end_src
 
 ** lsp-ui
 Lsp-ui
 #+begin_src emacs-lisp
 (use-package lsp-ui
-  :defer t
+  :delight
   :custom
   (lsp-ui-doc-show-with-cursor nil)
   (lsp-ui-doc-show-with-mouse nil)
   :bind  
   (:map lsp-mode-map
-	("M-TAB" . company-complete)
         ("C-c d" . lsp-ui-doc-glance)))
 #+end_src
-
-# ** Eglot
-
-# #+begin_src emacs-lisp
-# (require 'eglot)
-# (add-to-list 'eglot-server-programs
-#              '((web-mode :language-id "php") . ("intelephense" "--stdio" :initializationOptions
-# 						(:licenseKey "00UDX5WYE44TGEN"))))
-
-
-# (add-hook 'web-mode-hook #'eglot-ensure)
-# (setq eldoc-documentation-strategy 'eldoc-documentation-default)
-# #+end_src
-
-
 
 ** all-the-icons
 Important for icons
@@ -220,7 +204,6 @@ Important for icons
 Pretty good dashboard
 #+begin_src emacs-lisp
 (use-package dashboard
-  :ensure t
   :config
   (dashboard-setup-startup-hook)
   :custom
@@ -233,17 +216,17 @@ Pretty good dashboard
 Relative lines with a nice arrow
 #+begin_src emacs-lisp
 (use-package linum-relative
+  :delight
   :custom
   (linum-relative-current-symbol "->")
-  :config
-  (add-hook 'prog-mode-hook #'(lambda () (interactive)
-				(linum-relative-mode))))
+  :hook (prog-mode . linum-relative-mode))
 #+end_src
 
 ** beacon
 Highlights the line on focus
 #+begin_src emacs-lisp
 (use-package beacon
+  :delight
   :custom
   (beacon-color "#00fa9a")
   :config
@@ -254,20 +237,18 @@ Highlights the line on focus
 Better help menu
 #+begin_src emacs-lisp
 (use-package helpful
-  :config ; too lazy so I copy paste
-  (global-set-key (kbd "C-h f") #'helpful-callable)
-  (global-set-key (kbd "C-h v") #'helpful-variable)
-  (global-set-key (kbd "C-h k") #'helpful-key)
-  (global-set-key (kbd "C-h x") #'helpful-command)
-  (global-set-key (kbd "C-c C-d") #'helpful-at-point))
+  :bind (("C-h f" . helpful-callable)
+	 ("C-h v" . helpful-variable)
+	 ("C-h k" . helpful-key)
+	 ("C-h x" . helpful-command)
+	 ("C-c C-d" . helpful-at-point)))
 #+end_src
 
 ** ace-window
 Better other window
 #+begin_src emacs-lisp
 (use-package ace-window
-  :config
-  (global-set-key (kbd "C-x o") 'ace-window))
+  :bind ([remap other-window] . ace-window))
 #+end_src
 
 ** ace-jump-mode
@@ -278,44 +259,43 @@ Consider trying avy
 
 #+begin_src emacs-lisp
 (use-package ace-jump-mode
-  :config
-  (global-set-key (kbd "C-;") 'ace-jump-mode)
+  :delight
   :custom
-  (ace-jump-mode-case-fold t))
+  (ace-jump-mode-case-fold t)
+  :bind ("C-;" . ace-jump-mode))
 #+end_src
+
+
 
 ** goto-line-preview
 Preview goto-line
 #+begin_src emacs-lisp
 (use-package goto-line-preview
-  :config
-  (global-set-key [remap goto-line] 'goto-line-preview))
+  :bind ([remap goto-line] . goto-line-preview))
 #+end_src
 
 ** indent-guide
-Indent lines (necessary)
+Shows vertical lines of indentation (necessary but might change to something else)
 #+begin_src emacs-lisp
 (use-package indent-guide
-  :init
-  (add-hook 'prog-mode-hook #'indent-guide-mode))
+  :delight
+  :hook (prog-mode . indent-guide-mode))
 #+end_src
 
 ** crux
 Collection of Ridiculously Useful eXtensions for Emacs
 #+begin_src emacs-lisp
 (use-package crux
-  :config
-  (global-set-key (kbd "C-k") 'crux-smart-kill-line)
-  (global-set-key (kbd "C-o") 'crux-smart-open-line)
-  (global-set-key (kbd "M-o") 'crux-smart-open-line-above))
+  :bind (("M-o" . crux-smart-open-line-above)
+	 ("C-o" . crux-smart-open-line)))
 #+end_src
 
 ** toc-org
 Automatic Table of Content
 #+begin_src emacs-lisp
 (use-package toc-org
-  :init
-  (add-hook 'org-mode-hook 'toc-org-mode))
+  :delight
+  :hook (org-mode . toc-org-mode))
 #+end_src
 
 Global web mode
@@ -337,42 +317,34 @@ Global web mode
         ("blade"  . "\\.blade\\."))))
 #+end_src
 
-# ** flycheck
-# Flycheck to replace flymake
-##+begin_src emacs-lisp
-#(use-package flycheck
-#  :ensure t
-#:init (global-flycheck-mode))
-##+end_src
-
 ** yasnippet
 Snippets
 #+begin_src emacs-lisp
 (use-package yasnippet
-  :ensure t
-  :init
-  (add-hook 'web-mode-hook #'yas-minor-mode)
-  (add-hook 'org-mode-hook #'yas-minor-mode)
-  (add-hook 'vlang-mode-hook #'yas-minor-mode)
+  :hook ((web-mode . yas-minor-mode)
+	 (org-mode . yas-minor-mode)
+	 (vlang-mode . yas-minor-mode))
+  :bind (:map yas-minor-mode-map
+	      ("C-c <spc>" . yas-expand)
+	      ("<tab>" . nil))
   :config
-  (yas-reload-all)
-  (define-key yas-minor-mode-map (kbd "C-c SPC") 'yas-expand)
-  (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "<tab>") nil))
+  (yas-reload-all))
 #+end_src
 
 ** hydra
 Creates hydras
 #+begin_src emacs-lisp
-(use-package hydra
-  :ensure t)
+(use-package hydra)
 #+end_src
 
 ** company
 completion ui
 #+begin_src emacs-lisp
 (use-package company
-  :after lsp-mode
+  :demand t
+  :bind (:map prog-mode-map
+	      ("M-<tab>" . company-complete))
+  :hook (prog-mode . company-mode)
   :custom
   (company-idle-delay nil)
   (company-frontends '(company-pseudo-tooltip-frontend))
@@ -380,9 +352,8 @@ completion ui
   (company-tooltip-limit 6)
   (company-tooltip-minimum 6)
   :config
-  (global-company-mode)
-  (company-vscode-light-icons-margin)
-  (company-search-words-in-any-order-regexp))
+  (setq company-format-margin-function #'company-vscode-light-icons-margin)
+  (setq company-search-regexp-function #'company-search-words-in-any-order-regexp))
   #+end_src
 
 ** nov
@@ -396,6 +367,8 @@ ebook reader
 ** treesit-auto
 #+begin_src emacs-lisp
 (use-package treesit-auto
+  :delight
+  :demand t
   :custom
   (treesit-auto-install 'prompt)
   :config
@@ -412,8 +385,15 @@ Flymake creates junk files and flycheck is better anyway
 
 #+begin_src emacs-lisp
 (use-package flycheck
-  :ensure t
+  :delight
   :init (global-flycheck-mode))
+#+end_src
+
+** delight
+Hides some major/minor modes
+
+#+begin_src emacs-lisp
+(use-package delight)
 #+end_src
 
 ** List of packages I should look into
@@ -426,6 +406,7 @@ Flymake creates junk files and flycheck is better anyway
 ** Catpuccin
 #+begin_src emacs-lisp
 (use-package catppuccin-theme
+  :demand t
   :custom
   (catppuccin-flavor 'latte)
   :config
