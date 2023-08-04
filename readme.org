@@ -107,6 +107,9 @@
 ; Fixing dired mouse click
 (with-eval-after-load 'dired
   (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
+
+;; show dashboard for emacsclient
+(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 #+END_SRC
 
 * Global keybindings
