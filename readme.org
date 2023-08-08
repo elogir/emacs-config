@@ -25,7 +25,7 @@
   - [[#indent-guide][indent-guide]]
   - [[#crux][crux]]
   - [[#toc-org][toc-org]]
-  - [[#yasnippet][yasnippet]]
+  - [[#yasnippet][Yasnippet]]
   - [[#hydra][hydra]]
   - [[#company][company]]
   - [[#nov][nov]]
@@ -40,6 +40,7 @@
 - [[#language-packages-and-config][Language packages and config]]
   - [[#laravel][Laravel]]
   - [[#vlang][Vlang]]
+  - [[#yuck-eww][Yuck (eww)]]
 - [[#themes-1][Themes]]
 
 * Emacs configuration
@@ -320,7 +321,7 @@ Global web mode
         ("blade"  . "\\.blade\\."))))
 #+end_src
 
-** yasnippet
+** Yasnippet
 Snippets
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -328,7 +329,7 @@ Snippets
 	 (org-mode . yas-minor-mode)
 	 (vlang-mode . yas-minor-mode))
   :bind (:map yas-minor-mode-map
-	      ("C-c <spc>" . yas-expand)
+	      ("C-c SPC" . yas-expand)
 	      ("<tab>" . nil))
   :config
   (yas-reload-all))
@@ -477,6 +478,13 @@ _c_: controler
     (make-lsp-client :new-connection (lsp-stdio-connection (expand-file-name "~/.config/v-analyzer/bin/v-analyzer"))
                      :activation-fn (lsp-activate-on "vlang")
                      :server-id 'v-analyzer)))
+#+end_src
+
+** Yuck (eww)
+
+*** yuck-mode
+#+begin_src emacs-lisp
+(use-package yuck-mode)
 #+end_src
 
 * Themes
