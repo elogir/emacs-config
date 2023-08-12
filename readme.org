@@ -6,7 +6,7 @@
 
 * Table of contents :toc:
 - [[#emacs-configuration][Emacs configuration]]
-- [[#global-keybindings][Global keybindings]]
+- [[#global-keybindings-and-functions][Global keybindings and functions]]
 - [[#global-packages][Global Packages]]
   - [[#org-auto-tangle][org-auto-tangle]]
   - [[#org-modern][org-modern]]
@@ -33,15 +33,19 @@
   - [[#vterm][vterm]]
   - [[#flycheck][flycheck]]
   - [[#delight][delight]]
+  - [[#combobulate][combobulate]]
+  - [[#dap-mode][dap-mode]]
+  - [[#undo-tree][undo-tree]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
+  - [[#default-theme][default theme]]
+  - [[#loaded-theme][Loaded theme]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
   - [[#laravel][Laravel]]
   - [[#vlang][Vlang]]
   - [[#yuck-eww][Yuck (eww)]]
-- [[#themes-1][Themes]]
 
 * Emacs configuration
 
@@ -113,8 +117,8 @@
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 #+END_SRC
 
-* Global keybindings
-Mainly macros I use
+* Global keybindings and functions
+Mainly macros and global fucntions I use
 
 #+begin_src emacs-lisp
 ;; Opens eshell window on the right
@@ -123,6 +127,10 @@ Mainly macros I use
 				  (split-window-right)
 				  (windmove-right)
 				  (eshell)))
+
+(defun clear-undo-tree ()
+  (interactive)
+  (setq buffer-undo-tree nil))
 
 ;; ibuffer is actually better, why is it not bound by default
 (global-set-key [remap list-buffers] 'ibuffer)
@@ -152,7 +160,7 @@ Makes org files way better
 Nice clang format package
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format+
-  :hook (c-mode-common . clang-format+-mode))
+  :hook (c-ts-mode . clang-format+-mode))
 #+END_SRC
 
 ** which-key
@@ -179,7 +187,8 @@ Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
                         (lsp-enable-which-key-integration))))
 	 (c-mode . lsp)
 	 (vland-mode . lsp)
-	 (web-mode . lsp))
+	 (web-mode . lsp)
+	 (c-ts-mode . lsp))
   :bind (:map lsp-mode-map
 	      ("C-c l" . lsp-command-map)))
 #+end_src
@@ -400,9 +409,45 @@ Hides some major/minor modes
 (use-package delight)
 #+end_src
 
+** combobulate
+Might take a look later when C/C++ is supported
+# #+begin_src emacs-lisp
+# (use-package combobulate
+#     :elpaca (combobulate :host github :repo "mickeynp/combobulate")
+#     :preface
+#     (setq combobulate-key-prefix "C-c o")
+#     :hook ((python-ts-mode . combobulate-mode)
+#            (c-ts-mode . combobulate-mode)))
+# #+end_src
+
+** dap-mode
+Might take a look if I need debug for something else than C/C++
+# #+begin_src emacs-lisp
+# (use-package dap-mode
+#   :config
+#   (require 'dap-gdb-lldb)
+#   (dap-gdb-lldb-setup)
+#   (dap-auto-configure-mode 1)
+#   (define-advice dap-debug (:after (orig-func &rest args) disable-lsp-ui-doc) (lsp-ui-doc-mode -1))
+#   (define-advice dap-disconnect (:after (orig-func &rest args) enable-lsp-ui-doc) (lsp-ui-doc-mode t)))
+# #+end_src
+
+** undo-tree
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :init
+    (global-undo-tree-mode)
+    :custom
+    (undo-tree-history-directory-alist `(("." . ,(expand-file-name "undo" user-emacs-directory))))
+    (undo-tree-auto-save-history t)
+    :config
+    (defadvice undo-tree-make-history-save-file-name
+	(after undo-tree activate)
+      (setq ad-return-value (concat ad-return-value ".gz"))))
+#+end_src
+
 ** List of packages I should look into
 
-- combobulate
 - undo-tree or alternatives
 
 * Themes
@@ -414,11 +459,31 @@ Hides some major/minor modes
   :custom
   (catppuccin-flavor 'latte)
   :config
-  (load-theme 'catppuccin :no-confirm))
+  (catppuccin-reload))
+#+end_src
+
+** default theme
+#+begin_src emacs-lisp
+(use-package standard-themes)
+#+end_src
+
+** Loaded theme
+#+begin_src emacs-lisp
+(elpaca-wait)
+;; (load-theme 'catppuccin :no-confirm)
+(load-theme 'standard-light :no-confirm)
 #+end_src
 
 * Hooks
 dap-mode or enable toolbar and menu bar when gdb mode enabled
+
+#+begin_src emacs-lisp
+(add-hook 'c-ts-mode-hook #'(lambda ()
+                              (setq-local c-indent-tabs-mode t
+                                          tab-width 4
+                                          c-tab-always-indent t
+                                          indent-line-function 'insert-tab)))
+#+end_src
 
 * Language packages and config
 
@@ -485,12 +550,4 @@ _c_: controler
 *** yuck-mode
 #+begin_src emacs-lisp
 (use-package yuck-mode)
-#+end_src
-
-* Themes
-
-My default theme is the default emacs theme, however sometimes I want something different
-
-#+begin_src emacs-lisp
-(defun custom-theme ())
 #+end_src
