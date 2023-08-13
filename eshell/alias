@@ -1,1 +1,1 @@
-alias pa 'php artisan'
+alias ec cd ~/.emacs.d/ && ls

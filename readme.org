@@ -6,6 +6,8 @@
 
 * Table of contents :toc:
 - [[#emacs-configuration][Emacs configuration]]
+  - [[#global][Global]]
+  - [[#eshell][Eshell]]
 - [[#global-keybindings-and-functions][Global keybindings and functions]]
 - [[#global-packages][Global Packages]]
   - [[#org-auto-tangle][org-auto-tangle]]
@@ -49,6 +51,7 @@
 
 * Emacs configuration
 
+** Global
 #+BEGIN_SRC emacs-lisp
 ;; Initialisation
 (setq inhibit-default-init t
@@ -115,7 +118,16 @@
 
 ;; show dashboard for emacsclient
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+;; add make extension .gmk
+(add-to-list 'auto-mode-alist '("\\.gmk\\'" . makefile-mode))
 #+END_SRC
+
+** Eshell
+
+#+begin_src emacs-lisp
+(setq eshell-ls-initial-args "-lah")
+#+end_src
 
 * Global keybindings and functions
 Mainly macros and global fucntions I use
@@ -188,6 +200,7 @@ Lsp mode, maybe try eglot sometime but at the moment Lsp mode works great
 	 (c-mode . lsp)
 	 (vland-mode . lsp)
 	 (web-mode . lsp)
+	 (c++-ts-mode . lsp)
 	 (c-ts-mode . lsp))
   :bind (:map lsp-mode-map
 	      ("C-c l" . lsp-command-map)))
@@ -470,8 +483,8 @@ Might take a look if I need debug for something else than C/C++
 ** Loaded theme
 #+begin_src emacs-lisp
 (elpaca-wait)
-;; (load-theme 'catppuccin :no-confirm)
-(load-theme 'standard-light :no-confirm)
+(load-theme 'catppuccin :no-confirm)
+;; (load-theme 'standard-light :no-confirm)
 #+end_src
 
 * Hooks
