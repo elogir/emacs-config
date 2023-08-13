@@ -460,8 +460,7 @@ Might take a look if I need debug for something else than C/C++
 #+end_src
 
 ** List of packages I should look into
-
-- undo-tree or alternatives
+Empty for now ;)
 
 * Themes
 

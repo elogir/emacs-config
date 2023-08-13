@@ -1,1 +1,2 @@
+alias ff find-file $1
 alias ec cd ~/.emacs.d/ && ls
