@@ -24,7 +24,7 @@
   - [[#ace-window][ace-window]]
   - [[#ace-jump-mode][ace-jump-mode]]
   - [[#goto-line-preview][goto-line-preview]]
-  - [[#indent-guide][indent-guide]]
+  - [[#indent-bars][indent-bars]]
   - [[#crux][crux]]
   - [[#toc-org][toc-org]]
   - [[#yasnippet][Yasnippet]]
@@ -38,6 +38,8 @@
   - [[#combobulate][combobulate]]
   - [[#dap-mode][dap-mode]]
   - [[#undo-tree][undo-tree]]
+  - [[#transpose-frame][transpose-frame]]
+  - [[#projectile][projectile]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -48,6 +50,7 @@
   - [[#laravel][Laravel]]
   - [[#vlang][Vlang]]
   - [[#yuck-eww][Yuck (eww)]]
+  - [[#c][C]]
 
 * Emacs configuration
 
@@ -172,6 +175,7 @@ Makes org files way better
 Nice clang format package
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format+
+  :after (clang-format)
   :hook (c-ts-mode . clang-format+-mode))
 #+END_SRC
 
@@ -233,7 +237,7 @@ Pretty good dashboard
   :config
   (dashboard-setup-startup-hook)
   :custom
-  (dashboard-projects-backend 'project-el)
+  (dashboard-projects-backend 'projectile)
   (dashboard-items '((recents  . 5)
                      (projects . 5))))
 #+end_src
@@ -288,7 +292,9 @@ Consider trying avy
   :delight
   :custom
   (ace-jump-mode-case-fold t)
-  :bind ("C-;" . ace-jump-mode))
+  :bind ("C-;" . ace-jump-mode)
+  :config
+  (ace-jump-mode-enable-mark-sync))
 #+end_src
 
 
@@ -300,13 +306,23 @@ Preview goto-line
   :bind ([remap goto-line] . goto-line-preview))
 #+end_src
 
-** indent-guide
-Shows vertical lines of indentation (necessary but might change to something else)
+** indent-bars
+Replacement for indent-guide
 #+begin_src emacs-lisp
-(use-package indent-guide
-  :delight
-  :hook (prog-mode . indent-guide-mode))
-#+end_src
+(use-package indent-bars
+  :elpaca (indent-bars :host github :repo "jdtsmith/indent-bars")
+  :hook ((c-ts-mode web-mode) . indent-bars-mode)
+  :custom
+  (indent-bars-prefer-character t))
+  #+end_src
+
+# ** indent-guide
+# Shows vertical lines of indentation (necessary but might change to something else)
+# #+begin_src emacs-lisp
+# (use-package indent-guide
+#   :delight
+#   :hook (prog-mode . indent-guide-mode))
+# #+end_src
 
 ** crux
 Collection of Ridiculously Useful eXtensions for Emacs
@@ -347,9 +363,8 @@ Global web mode
 Snippets
 #+begin_src emacs-lisp
 (use-package yasnippet
-  :hook ((web-mode . yas-minor-mode)
-	 (org-mode . yas-minor-mode)
-	 (vlang-mode . yas-minor-mode))
+  :hook ((lsp-mode . yas-minor-mode)
+	 (org-mode . yas-minor-mode))
   :bind (:map yas-minor-mode-map
 	      ("C-c SPC" . yas-expand)
 	      ("<tab>" . nil))
@@ -459,6 +474,24 @@ Might take a look if I need debug for something else than C/C++
       (setq ad-return-value (concat ad-return-value ".gz"))))
 #+end_src
 
+** transpose-frame
+Move Emacs' windows
+#+begin_src emacs-lisp
+(use-package transpose-frame)
+#+end_src
+
+** projectile
+Faster and more complete compared to project.el
+#+begin_src emacs-lisp
+(use-package projectile
+  :init
+  (projectile-mode +1)
+  :custom
+  (projectile-auto-discover nil)
+  :bind (:map global-map
+              ("C-x p" . projectile-command-map)))
+#+end_src
+
 ** List of packages I should look into
 Empty for now ;)
 
@@ -489,13 +522,11 @@ Empty for now ;)
 * Hooks
 dap-mode or enable toolbar and menu bar when gdb mode enabled
 
-#+begin_src emacs-lisp
-(add-hook 'c-ts-mode-hook #'(lambda ()
-                              (setq-local c-indent-tabs-mode t
-                                          tab-width 4
-                                          c-tab-always-indent t
-                                          indent-line-function 'insert-tab)))
-#+end_src
+# #+begin_src emacs-lisp
+# (add-hook 'c-ts-mode-hook #'(lambda ()
+#                               (setq-local tab-width 4
+#                                           indent-line-function 'insert-tab)))
+# #+end_src
 
 * Language packages and config
 
@@ -562,4 +593,11 @@ _c_: controler
 *** yuck-mode
 #+begin_src emacs-lisp
 (use-package yuck-mode)
+#+end_src
+
+** C
+
+#+begin_src emacs-lisp
+(setq-default c-ts-mode-indent-offset 4)
+(setq-default indent-tabs-mode nil)
 #+end_src
