@@ -51,6 +51,9 @@
   - [[#vlang][Vlang]]
   - [[#yuck-eww][Yuck (eww)]]
   - [[#c][C]]
+- [[#org--latex][Org + LaTeX]]
+  - [[#packages][Packages]]
+  - [[#config][config]]
 
 * Emacs configuration
 
@@ -363,9 +366,9 @@ Global web mode
 Snippets
 #+begin_src emacs-lisp
 (use-package yasnippet
-  :hook ((lsp-mode . yas-minor-mode)
-	 (org-mode . yas-minor-mode))
+  :hook ((lsp-mode . yas-minor-mode) (org-mode . yas-minor-mode))
   :bind (:map yas-minor-mode-map
+
 	      ("C-c SPC" . yas-expand)
 	      ("<tab>" . nil))
   :config
@@ -384,8 +387,10 @@ completion ui
 (use-package company
   :demand t
   :bind (:map prog-mode-map
+	      ("M-<tab>" . company-complete)
+         :map org-mode-map
 	      ("M-<tab>" . company-complete))
-  :hook (prog-mode . company-mode)
+  :hook ((prog-mode . company-mode) (org-mode . company-mode))
   :custom
   (company-idle-delay nil)
   (company-frontends '(company-pseudo-tooltip-frontend))
@@ -600,4 +605,88 @@ _c_: controler
 #+begin_src emacs-lisp
 (setq-default c-ts-mode-indent-offset 4)
 (setq-default indent-tabs-mode nil)
+#+end_src
+
+* Org + LaTeX
+
+** Packages
+
+#+begin_src emacs-lisp
+
+(load "auctex.el" nil t t)
+(load "preview-latex.el" nil t t)
+(load "texmathp.el" nil t t)
+
+(elpaca-wait)
+
+(use-package aas
+  :hook (org-mode . aas-activate-for-major-mode)
+  :config
+  (aas-set-snippets 'org-mode
+                    :cond #'texmathp
+                    "/ens" '(yas "\\mathbb{$1} ")
+                    "/fr" '(yas "\\frac{$1}{$2} ")
+                    "_" '(yas "_{$1}")
+                    "^" '(yas "^{$1}")
+                    "/pt" "\\forall "
+                    "/ex" "\\exists "
+                    "RR" "\\mathbb{R} "
+                    "NN" "\\mathbb{N} "
+                    "<=" "\\leq"
+                    ">=" "\\geq"
+                    "=>" "\\implies"
+                    "iif" "\\Longleftrightarrow"
+                    "/abs" '(yas "\\displaystyle\\left\\lvert $1 \\right\\rvert $0")
+                    "/norme" '(yas "\\lVert $1 \\rVert")
+                    "/inf" "\\infty")
+  (aas-set-snippets 'org-mode
+                     ";i" '(yas "\\\\( $1 \\\\) $0")
+                     ";e" '(yas "\\\\[ $1 \\\\] $0")))
+
+(use-package org-fragtog
+  :hook (org-mode . org-fragtog-mode))
+
+(use-package org-elp
+  :custom ((org-elp-idle-time 0.25)
+           (org-elp-split-fraction 0.20)))
+
+;; (use-package flycheck-grammalecte
+;;              :hook (fountain-mode . flycheck-mode)
+;;              :init
+;;              (setq flycheck-grammalecte-report-apos nil
+;;                    flycheck-grammalecte-report-esp nil
+;;                    flycheck-grammalecte-report-nbsp nil)
+;;              :config
+;;              (add-to-list 'flycheck-grammalecte-enabled-modes 'org-mode)
+;;              (grammalecte-download-grammalecte)
+;;              (flycheck-grammalecte-setup))
+
+;; (use-package org-latex-impatient
+;;   :elpaca (org-latex-impatient :host github :repo "elogir/org-latex-impatient")
+;;   :hook (org-mode . org-latex-impatient-mode)
+;;   :custom (org-latex-impatient-tex2svg-bin
+;;         "~/node_modules/mathjax-node-cli/bin/tex2svg")
+;;   (org-latex-impatient-ignore-headers t)
+;;   (org-latex-impatient-posframe-position 'point)
+;;   (org-latex-impatient-posframe-position-handler 'posframe-poshandler-point-bottom-left-corner))
+
+;; (use-package math-preview)
+
+      #+end_src
+
+** config
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'ox-latex
+(add-to-list 'org-latex-classes
+             '("org-plain-latex"
+               "\\documentclass{article}
+           [NO-DEFAULT-PACKAGES]
+           [PACKAGES]
+           [EXTRA]"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+end_src
