@@ -107,6 +107,7 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(scroll-lock-mode 1)
 
 ;; Org mode fixes
 (setq org-src-fontify-natively t
@@ -140,11 +141,7 @@ Mainly macros and global fucntions I use
 
 #+begin_src emacs-lisp
 ;; Opens eshell window on the right
-(global-set-key (kbd "C-c e") #'(lambda ()
-				  (interactive)
-				  (split-window-right)
-				  (windmove-right)
-				  (eshell)))
+(global-set-key (kbd "C-c e") 'eww)
 
 (defun clear-undo-tree ()
   (interactive)
@@ -638,7 +635,17 @@ _c_: controler
                     "iif" "\\Longleftrightarrow"
                     "/abs" '(yas "\\displaystyle\\left\\lvert $1 \\right\\rvert $0")
                     "/norme" '(yas "\\lVert $1 \\rVert")
-                    "/inf" "\\infty")
+                    "/inf" "\\infty"
+                    "/lim" '(yas "\\underset{$1 \\to $2}{lim} $3 = $0")
+                    "/dp" '(yas "\\frac{\\partial{$1}}{\\partial{$2}}")
+                    "/dd" '(yas "\\frac{d$1}{d$2}")
+                    "/t1" '(yas "\\text{$1} ")
+                    "/t2" '(yas "\\quad\\text{$1}\\quad ")
+                    "/t3" '(yas "\\qquad\\text{$1}\\qquad ")
+                    "/pp" '(yas "\\left( $1 \\right)")
+                    "~" "\\sim"
+                    "/V" '(yas "\\sqrt{$1}")
+                    "/int" '(yas "\\int_{$1}^{$2}$3d$4"))
   (aas-set-snippets 'org-mode
                      ";i" '(yas "\\\\( $1 \\\\) $0")
                      ";e" '(yas "\\\\[ $1 \\\\] $0")))
@@ -650,12 +657,20 @@ _c_: controler
   :custom ((org-elp-idle-time 0.25)
            (org-elp-split-fraction 0.20)))
 
+;; (use-package flycheck-aspell
+;;   :custom
+;;   (ispell-dictionary "fr")
+;;   (ispell-program-name "aspell")
+;;   (ispell-silently-savep t))
+
 ;; (use-package flycheck-grammalecte
-;;              :hook (fountain-mode . flycheck-mode)
 ;;              :init
 ;;              (setq flycheck-grammalecte-report-apos nil
 ;;                    flycheck-grammalecte-report-esp nil
-;;                    flycheck-grammalecte-report-nbsp nil)
+;;                    flycheck-grammalecte-report-nbsp nil
+;;                    flycheck-grammalecte-report-grammar t
+;;                    flycheck-grammalecte-report-spellcheck t
+;;                    flycheck-grammalecte-report-typo nil)
 ;;              :config
 ;;              (add-to-list 'flycheck-grammalecte-enabled-modes 'org-mode)
 ;;              (grammalecte-download-grammalecte)
