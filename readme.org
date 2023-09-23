@@ -610,6 +610,10 @@ _c_: controler
 
 #+begin_src emacs-lisp
 
+(load "auctex.el" nil t t)
+(load "preview-latex.el" nil t t)
+(load "texmathp.el" nil t t)
+
 (use-package aas
   :hook (org-mode . aas-activate-for-major-mode)
   :config
