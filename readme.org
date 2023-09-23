@@ -53,7 +53,7 @@
   - [[#c][C]]
 - [[#org--latex][Org + LaTeX]]
   - [[#packages][Packages]]
-  - [[#config][config]]
+  - [[#config][Config]]
 
 * Emacs configuration
 
@@ -610,12 +610,6 @@ _c_: controler
 
 #+begin_src emacs-lisp
 
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
-(load "texmathp.el" nil t t)
-
-(elpaca-wait)
-
 (use-package aas
   :hook (org-mode . aas-activate-for-major-mode)
   :config
@@ -657,39 +651,21 @@ _c_: controler
   :custom ((org-elp-idle-time 0.25)
            (org-elp-split-fraction 0.20)))
 
-;; (use-package flycheck-aspell
-;;   :custom
-;;   (ispell-dictionary "fr")
-;;   (ispell-program-name "aspell")
-;;   (ispell-silently-savep t))
-
-;; (use-package flycheck-grammalecte
-;;              :init
-;;              (setq flycheck-grammalecte-report-apos nil
-;;                    flycheck-grammalecte-report-esp nil
-;;                    flycheck-grammalecte-report-nbsp nil
-;;                    flycheck-grammalecte-report-grammar t
-;;                    flycheck-grammalecte-report-spellcheck t
-;;                    flycheck-grammalecte-report-typo nil)
-;;              :config
-;;              (add-to-list 'flycheck-grammalecte-enabled-modes 'org-mode)
-;;              (grammalecte-download-grammalecte)
-;;              (flycheck-grammalecte-setup))
-
-;; (use-package org-latex-impatient
-;;   :elpaca (org-latex-impatient :host github :repo "elogir/org-latex-impatient")
-;;   :hook (org-mode . org-latex-impatient-mode)
-;;   :custom (org-latex-impatient-tex2svg-bin
-;;         "~/node_modules/mathjax-node-cli/bin/tex2svg")
-;;   (org-latex-impatient-ignore-headers t)
-;;   (org-latex-impatient-posframe-position 'point)
-;;   (org-latex-impatient-posframe-position-handler 'posframe-poshandler-point-bottom-left-corner))
-
-;; (use-package math-preview)
-
+(use-package flycheck-grammalecte
+             :init
+             (setq flycheck-grammalecte-report-apos nil
+                   flycheck-grammalecte-report-esp nil
+                   flycheck-grammalecte-report-nbsp nil
+                   flycheck-grammalecte-report-grammar t
+                   flycheck-grammalecte-report-spellcheck nil
+                   flycheck-grammalecte-report-typo nil)
+             :config
+             (add-to-list 'flycheck-grammalecte-enabled-modes 'org-mode)
+             (grammalecte-download-grammalecte)
+             (flycheck-grammalecte-setup))
       #+end_src
 
-** config
+** Config
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'ox-latex

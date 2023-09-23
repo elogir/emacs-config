@@ -6,7 +6,7 @@
  '(custom-safe-themes
    '("f5e666fba0ded6ae9be004314ecf5f7feb605cdb84711b5c5ffd81acfb831183" default))
  '(org-format-latex-options
-   '(:foreground default :background default :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+   '(:foreground default :background default :scale 0.3 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\["))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
