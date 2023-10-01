@@ -128,6 +128,13 @@
 
 ;; add make extension .gmk
 (add-to-list 'auto-mode-alist '("\\.gmk\\'" . makefile-mode))
+
+;; disable dedicated windows
+(defun set-window-undedicated-p (window flag)
+ "Never set window dedicated."
+ flag)
+
+(advice-add 'set-window-dedicated-p :override #'set-window-undedicated-p)
 #+END_SRC
 
 ** Eshell
