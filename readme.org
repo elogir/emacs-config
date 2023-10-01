@@ -21,7 +21,7 @@
   - [[#linum-relative][linum-relative]]
   - [[#beacon][beacon]]
   - [[#helpful][helpful]]
-  - [[#ace-window][ace-window]]
+  - [[#winum][winum]]
   - [[#ace-jump-mode][ace-jump-mode]]
   - [[#goto-line-preview][goto-line-preview]]
   - [[#indent-bars][indent-bars]]
@@ -275,11 +275,22 @@ Better help menu
 	 ("C-c C-d" . helpful-at-point)))
 #+end_src
 
-** ace-window
+** winum
 Better other window
 #+begin_src emacs-lisp
-(use-package ace-window
-  :bind ([remap other-window] . ace-window))
+;; (use-package ace-window
+;;   :bind ([remap other-window] . ace-window))
+
+(use-package winum
+    :ensure t
+    :bind (:map global-map ("C-x o" . tsa/winum-or-switch))
+    :config
+    (winum-mode t)
+    (defun tsa/winum-or-switch (&optional p)
+      (interactive "p")
+      (if (= 2 winum--window-count)
+	  (other-window p)
+	(call-interactively 'winum-select-window-by-number))))
 #+end_src
 
 ** ace-jump-mode
