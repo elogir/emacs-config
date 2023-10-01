@@ -238,6 +238,7 @@ Pretty good dashboard
   (dashboard-setup-startup-hook)
   :custom
   (dashboard-projects-backend 'projectile)
+  (dashboard-startup-banner 'logo)
   (dashboard-items '((recents  . 5)
                      (projects . 5))))
 #+end_src
@@ -485,13 +486,30 @@ Move Emacs' windows
 ** projectile
 Faster and more complete compared to project.el
 #+begin_src emacs-lisp
+(defun my-projectile-run-project (&optional prompt)
+  (interactive "P")
+  (let ((compilation-read-command
+         (or (not (projectile-run-command (projectile-compilation-dir)))
+             prompt)))
+    (projectile-run-project prompt)))
+
+(defun my-projectile-compile-project (&optional prompt)
+  (interactive "P")
+  (let ((compilation-read-command
+         (or (not (projectile-compilation-command (projectile-compilation-dir)))
+             prompt)))
+    (projectile-compile-project prompt)))
+
 (use-package projectile
   :init
   (projectile-mode +1)
   :custom
+  (projectile-track-known-projects-automatically nil)
   (projectile-auto-discover nil)
   :bind (:map global-map
-              ("C-x p" . projectile-command-map)))
+              ("C-x p" . projectile-command-map)
+              ("C-c v" . my-projectile-run-project)
+              ("C-c c" . my-projectile-compile-project)))
 #+end_src
 
 ** List of packages I should look into
