@@ -40,6 +40,7 @@
   - [[#undo-tree][undo-tree]]
   - [[#transpose-frame][transpose-frame]]
   - [[#projectile][projectile]]
+  - [[#pdf-tools][pdf-tools]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -109,6 +110,8 @@
 (scroll-bar-mode -1)
 (scroll-lock-mode 1)
 
+(gud-tooltip-mode t)
+
 ;; Org mode fixes
 (setq org-src-fontify-natively t
       org-src-window-setup 'current-window
@@ -135,6 +138,16 @@
  flag)
 
 (advice-add 'set-window-dedicated-p :override #'set-window-undedicated-p)
+
+
+(add-hook 'before-save-hook 'my-prog-nuke-trailing-whitespace)
+
+(defun my-prog-nuke-trailing-whitespace ()
+  (when (derived-mode-p 'prog-mode)
+    (delete-trailing-whitespace)))
+
+(setq clang-format-style "file")
+
 #+END_SRC
 
 ** Eshell
@@ -156,6 +169,8 @@ Mainly macros and global fucntions I use
 
 ;; ibuffer is actually better, why is it not bound by default
 (global-set-key [remap list-buffers] 'ibuffer)
+
+(global-set-key (kbd "C-<f12>") 'whitespace-mode)
 #+end_src
 
 * Global Packages
@@ -182,7 +197,9 @@ Makes org files way better
 Nice clang format package
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format+
-  :after (clang-format)
+  :custom
+  (clang-format+-context 'buffer)
+  (clang-format+-always-enable t)
   :hook (c-ts-mode . clang-format+-mode))
 #+END_SRC
 
@@ -225,6 +242,7 @@ Lsp-ui
   :custom
   (lsp-ui-doc-show-with-cursor nil)
   (lsp-ui-doc-show-with-mouse nil)
+  (lsp-ui-doc-enable nil)
   :bind  
   (:map lsp-mode-map
         ("C-c d" . lsp-ui-doc-glance)))
@@ -518,6 +536,13 @@ Faster and more complete compared to project.el
              prompt)))
     (projectile-compile-project prompt)))
 
+(defun my-projectile-test-project (&optional prompt)
+  (interactive "P")
+  (let ((compilation-read-command
+         (or (not (projectile-test (projectile-compilation-dir)))
+             prompt)))
+    (projectile-compile-project prompt)))
+
 (use-package projectile
   :init
   (projectile-mode +1)
@@ -528,6 +553,12 @@ Faster and more complete compared to project.el
               ("C-x p" . projectile-command-map)
               ("C-c v" . my-projectile-run-project)
               ("C-c c" . my-projectile-compile-project)))
+#+end_src
+
+** pdf-tools
+
+#+begin_src emacs-lisp
+(use-package pdf-tools)
 #+end_src
 
 ** List of packages I should look into
@@ -646,63 +677,63 @@ _c_: controler
 
 #+begin_src emacs-lisp
 
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
-(load "texmathp.el" nil t t)
+;; (load "auctex.el" nil t t)
+;; (load "preview-latex.el" nil t t)
+;; (load "texmathp.el" nil t t)
 
-(use-package aas
-  :hook (org-mode . aas-activate-for-major-mode)
-  :config
-  (aas-set-snippets 'org-mode
-                    :cond #'texmathp
-                    "/ens" '(yas "\\mathbb{$1} ")
-                    "/fr" '(yas "\\frac{$1}{$2} ")
-                    "_" '(yas "_{$1}")
-                    "^" '(yas "^{$1}")
-                    "/pt" "\\forall "
-                    "/ex" "\\exists "
-                    "RR" "\\mathbb{R} "
-                    "NN" "\\mathbb{N} "
-                    "<=" "\\leq"
-                    ">=" "\\geq"
-                    "=>" "\\implies"
-                    "iif" "\\Longleftrightarrow"
-                    "/abs" '(yas "\\displaystyle\\left\\lvert $1 \\right\\rvert $0")
-                    "/norme" '(yas "\\lVert $1 \\rVert")
-                    "/inf" "\\infty"
-                    "/lim" '(yas "\\underset{$1 \\to $2}{lim} $3 = $0")
-                    "/dp" '(yas "\\frac{\\partial{$1}}{\\partial{$2}}")
-                    "/dd" '(yas "\\frac{d$1}{d$2}")
-                    "/t1" '(yas "\\text{$1} ")
-                    "/t2" '(yas "\\quad\\text{$1}\\quad ")
-                    "/t3" '(yas "\\qquad\\text{$1}\\qquad ")
-                    "/pp" '(yas "\\left( $1 \\right)")
-                    "~" "\\sim"
-                    "/V" '(yas "\\sqrt{$1}")
-                    "/int" '(yas "\\int_{$1}^{$2}$3d$4"))
-  (aas-set-snippets 'org-mode
-                     ";i" '(yas "\\\\( $1 \\\\) $0")
-                     ";e" '(yas "\\\\[ $1 \\\\] $0")))
+;; (use-package aas
+;;   :hook (org-mode . aas-activate-for-major-mode)
+;;   :config
+;;   (aas-set-snippets 'org-mode
+;;                     :cond #'texmathp
+;;                     "/ens" '(yas "\\mathbb{$1} ")
+;;                     "/fr" '(yas "\\frac{$1}{$2} ")
+;;                     "_" '(yas "_{$1}")
+;;                     "^" '(yas "^{$1}")
+;;                     "/pt" "\\forall "
+;;                     "/ex" "\\exists "
+;;                     "RR" "\\mathbb{R} "
+;;                     "NN" "\\mathbb{N} "
+;;                     "<=" "\\leq"
+;;                     ">=" "\\geq"
+;;                     "=>" "\\implies"
+;;                     "iif" "\\Longleftrightarrow"
+;;                     "/abs" '(yas "\\displaystyle\\left\\lvert $1 \\right\\rvert $0")
+;;                     "/norme" '(yas "\\lVert $1 \\rVert")
+;;                     "/inf" "\\infty"
+;;                     "/lim" '(yas "\\underset{$1 \\to $2}{lim} $3 = $0")
+;;                     "/dp" '(yas "\\frac{\\partial{$1}}{\\partial{$2}}")
+;;                     "/dd" '(yas "\\frac{d$1}{d$2}")
+;;                     "/t1" '(yas "\\text{$1} ")
+;;                     "/t2" '(yas "\\quad\\text{$1}\\quad ")
+;;                     "/t3" '(yas "\\qquad\\text{$1}\\qquad ")
+;;                     "/pp" '(yas "\\left( $1 \\right)")
+;;                     "~" "\\sim"
+;;                     "/V" '(yas "\\sqrt{$1}")
+;;                     "/int" '(yas "\\int_{$1}^{$2}$3d$4"))
+;;   (aas-set-snippets 'org-mode
+;;                      ";i" '(yas "\\\\( $1 \\\\) $0")
+;;                      ";e" '(yas "\\\\[ $1 \\\\] $0")))
 
-(use-package org-fragtog
-  :hook (org-mode . org-fragtog-mode))
+;; (use-package org-fragtog
+;;   :hook (org-mode . org-fragtog-mode))
 
-(use-package org-elp
-  :custom ((org-elp-idle-time 0.25)
-           (org-elp-split-fraction 0.20)))
+;; (use-package org-elp
+;;   :custom ((org-elp-idle-time 0.25)
+;;            (org-elp-split-fraction 0.20)))
 
-(use-package flycheck-grammalecte
-             :init
-             (setq flycheck-grammalecte-report-apos nil
-                   flycheck-grammalecte-report-esp nil
-                   flycheck-grammalecte-report-nbsp nil
-                   flycheck-grammalecte-report-grammar t
-                   flycheck-grammalecte-report-spellcheck nil
-                   flycheck-grammalecte-report-typo nil)
-             :config
-             (add-to-list 'flycheck-grammalecte-enabled-modes 'org-mode)
-             (grammalecte-download-grammalecte)
-             (flycheck-grammalecte-setup))
+;; (use-package flycheck-grammalecte
+;;              :init
+;;              (setq flycheck-grammalecte-report-apos nil
+;;                    flycheck-grammalecte-report-esp nil
+;;                    flycheck-grammalecte-report-nbsp nil
+;;                    flycheck-grammalecte-report-grammar t
+;;                    flycheck-grammalecte-report-spellcheck nil
+;;                    flycheck-grammalecte-report-typo nil)
+;;              :config
+;;              (add-to-list 'flycheck-grammalecte-enabled-modes 'org-mode)
+;;              (grammalecte-download-grammalecte)
+;;              (flycheck-grammalecte-setup))
       #+end_src
 
 ** Config
