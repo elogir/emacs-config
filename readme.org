@@ -41,6 +41,7 @@
   - [[#transpose-frame][transpose-frame]]
   - [[#projectile][projectile]]
   - [[#pdf-tools][pdf-tools]]
+  - [[#magit][magit]]
   - [[#list-of-packages-i-should-look-into][List of packages I should look into]]
 - [[#themes][Themes]]
   - [[#catpuccin][Catpuccin]]
@@ -48,6 +49,7 @@
   - [[#loaded-theme][Loaded theme]]
 - [[#hooks][Hooks]]
 - [[#language-packages-and-config][Language packages and config]]
+  - [[#common-lisp][Common Lisp]]
   - [[#laravel][Laravel]]
   - [[#vlang][Vlang]]
   - [[#yuck-eww][Yuck (eww)]]
@@ -148,6 +150,11 @@
 
 (setq clang-format-style "file")
 
+;; (add-to-list 'initial-frame-alist '(height . 35))
+;; (add-to-list 'initial-frame-alist '(width . 95))
+
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+
 #+END_SRC
 
 ** Eshell
@@ -169,7 +176,6 @@ Mainly macros and global fucntions I use
 
 ;; ibuffer is actually better, why is it not bound by default
 (global-set-key [remap list-buffers] 'ibuffer)
-
 (global-set-key (kbd "C-<f12>") 'whitespace-mode)
 #+end_src
 
@@ -307,7 +313,7 @@ Better other window
 ;;   :bind ([remap other-window] . ace-window))
 
 (use-package winum
-    :ensure t
+    :demand t
     :bind (:map global-map ("C-x o" . tsa/winum-or-switch))
     :config
     (winum-mode t)
@@ -561,6 +567,14 @@ Faster and more complete compared to project.el
 (use-package pdf-tools)
 #+end_src
 
+** magit
+The one and only
+
+#+begin_src emacs-lisp
+(use-package transient)
+(use-package magit)
+#+end_src
+
 ** List of packages I should look into
 Empty for now ;)
 
@@ -568,12 +582,12 @@ Empty for now ;)
 
 ** Catpuccin
 #+begin_src emacs-lisp
-(use-package catppuccin-theme
-  :demand t
-  :custom
-  (catppuccin-flavor 'latte)
-  :config
-  (catppuccin-reload))
+;; (use-package catppuccin-theme
+;;   :demand t
+;;   :custom
+;;   (catppuccin-flavor 'latte)
+;;   :config
+;;   (catppuccin-reload))
 #+end_src
 
 ** default theme
@@ -584,7 +598,7 @@ Empty for now ;)
 ** Loaded theme
 #+begin_src emacs-lisp
 (elpaca-wait)
-(load-theme 'catppuccin :no-confirm)
+(load-theme standard-light :no-confirm)
 ;; (load-theme 'standard-light :no-confirm)
 #+end_src
 
@@ -601,6 +615,15 @@ dap-mode or enable toolbar and menu bar when gdb mode enabled
 
 #+begin_src emacs-lisp
 (elpaca-wait)
+#+end_src
+
+** Common Lisp
+
+*** SLIME
+
+#+begin_src emacs-lisp
+(use-package slime
+  :custom (inferior-lisp-program "sbcl"))
 #+end_src
 
 ** Laravel
@@ -642,7 +665,12 @@ _c_: controler
 *** v-mode
 #+begin_src emacs-lisp
 (use-package vlang-mode
-  :elpaca (vlang-mode :host github :repo "Naheel-Azawy/vlang-mode"))
+  :elpaca (vlang-mode :host github :repo "Naheel-Azawy/vlang-mode")
+  :hook (vlang-mode . hs-minor-mode)
+  :bind (:map global-map
+              ("C-=" . hs-toggle-hiding))
+  :custom
+  (indent-line-function 'insert-tab))
 #+end_src
 
 *** v-analyzer
